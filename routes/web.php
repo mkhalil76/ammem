@@ -16,7 +16,9 @@
 Route::get('admin', function () {
     return redirect(admin_vw() . '/home');
 });
-
+Route::get('test', function () {
+    return "test";
+});
 Auth::routes();
 
 Route::get('/logout', 'HomeController@logout');

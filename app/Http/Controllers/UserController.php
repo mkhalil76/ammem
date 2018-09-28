@@ -231,6 +231,10 @@ class UserController extends Controller
         $user->job_id = $request->get('job_id');
         if ($request->has('password'))
             $user->password = bcrypt($request->get('password'));
+        return response()->json([
+            'status' => $user->save(),
+            'message' => 'تم  تعديل بياناتك بنجاح',
+        ]);
         return response_api($user->save());
     }
 }

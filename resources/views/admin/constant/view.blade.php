@@ -101,7 +101,6 @@
                     e.preventDefault();
 
                     var formData = new FormData($(this)[0]);
-
                     var action = $(this).attr('action');
                     var method = $(this).attr('method');
                     $("#wait_msg,#overlay").show();
@@ -122,7 +121,7 @@
                                 success.show();
                                 success.find('strong').text(response.message);
                                 table.ajax.reload();
-
+                                $('#editConstant').modal('hide');
                             } else {
                                 toastr["error"](response.message);
 
@@ -169,7 +168,7 @@
                                 success.show();
                                 success.find('strong').text(response.message);
                                 table.ajax.reload();
-
+                                $('#addConstant').modal('hide');
                             } else {
                                 toastr["error"](response.message);
 

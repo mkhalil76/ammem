@@ -180,16 +180,6 @@
 
                                 </div>
                             </div>
-                            <div class="col-md-4">
-                                <div class="form-group form-md-line-input has-success form-md-floating-label">
-                                    <div class="input-icon">
-                                        <input type="password" class="form-control" name="password" id="password">
-                                        <label for="form_control_1">كلمة المرور</label>
-                                        <span class="help-block">ادخل كلمة المرور هنا...</span>
-                                        <i class="fa fa-bell-o"></i>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                     <div class="form-actions noborder">

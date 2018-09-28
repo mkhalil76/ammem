@@ -210,6 +210,9 @@ class ConstantController extends Controller
             $query->cost = $request->get('cost');
             $query->max_num_member = $request->get('max_num_member');
         }
+        return response()->json([
+            'status' => $query->save()
+        ]);
         return response_api($query->save());
 
     }
@@ -265,7 +268,7 @@ class ConstantController extends Controller
     }
 
     public function store(Request $request, $type)
-    {
+    {   
         if ($type == 1) {
             $query = new Activity();
 
@@ -301,7 +304,10 @@ class ConstantController extends Controller
             $query->cost = $request->get('cost');
             $query->max_num_member = $request->get('max_num_member');
         }
-        return response_api($query->save());
+        return response()->json([
+            'status' => $query->save()
+        ]);
+        //return response_api($query->save());
     }
 
     public function destroy(Request $request, $constant_id)

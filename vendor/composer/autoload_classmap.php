@@ -6,6 +6,23 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'AddCacadeReferanceToBankTransferTable' => $baseDir . '/database/migrations/2018_09_29_211610_add_cacade_referance_to_bank_transfer_table.php',
+    'AddCacadeReferanceToMediaTable' => $baseDir . '/database/migrations/2018_09_29_211726_add_cacade_referance_to_media_table.php',
+    'AddCacadeReferanceToMessageGroupsTable' => $baseDir . '/database/migrations/2018_09_29_211314_add_cacade_referance_to_message_groups_table.php',
+    'AddCacadeReferanceToMessagesGroupsTable' => $baseDir . '/database/migrations/2018_09_29_211913_add_cacade_referance_to_messages_groups_table.php',
+    'AddCacadeReferanceToMessagesTable' => $baseDir . '/database/migrations/2018_09_29_205146_add_cacade_referance_to_messages_table.php',
+    'AddCacadeReferanceToRepliesForMessageIdTable' => $baseDir . '/database/migrations/2018_09_29_212040_add_cacade_referance_to_replies_for_message_id_table.php',
+    'AddCacadeReferanceToRepliesTable' => $baseDir . '/database/migrations/2018_09_29_205342_add_cacade_referance_to_replies_table.php',
+    'AddCacadeReferanceToSuvaryForMessageIdTable' => $baseDir . '/database/migrations/2018_09_29_212323_add_cacade_referance_to_suvary_for_message_id_table.php',
+    'AddCacadeReferanceToSuvaryResultsForMessageIdTable' => $baseDir . '/database/migrations/2018_09_29_212203_add_cacade_referance_to_suvary_results_for_message_id_table.php',
+    'AddCacadeReferanceToSuvaryResultsTable' => $baseDir . '/database/migrations/2018_09_29_205726_add_cacade_referance_to_suvary_results_table.php',
+    'AddCacadeReferanceToUserGroupTable' => $baseDir . '/database/migrations/2018_09_29_205904_add_cacade_referance_to_user_group_table.php',
+    'AddCacadeReferanceToUserGroupsTable' => $baseDir . '/database/migrations/2018_09_29_211454_add_cacade_referance_to_user_groups_table.php',
+    'AddCacadeReferanceToUserMessagesTable' => $baseDir . '/database/migrations/2018_09_29_210524_add_cacade_referance_to_user_messages_table.php',
+    'AddCacadeReferanceToUserMsgForMessageIdTable' => $baseDir . '/database/migrations/2018_09_29_212529_add_cacade_referance_to_user_msg_for_message_id_table.php',
+    'AddCacadeReferanceToUserMsgSeenForMessageIdTable' => $baseDir . '/database/migrations/2018_09_29_212428_add_cacade_referance_to_user_msg_seen_for_message_id_table.php',
+    'AddCacadeReferanceToUserSeenMessageTable' => $baseDir . '/database/migrations/2018_09_29_210354_add_cacade_referance_to_user_seen_message_table.php',
+    'AddCacadeReferanceToUserTable' => $baseDir . '/database/migrations/2018_09_29_204215_add_cacade_referance_to_user_table.php',
     'App\\Activity' => $baseDir . '/app/Activity.php',
     'App\\BankTransferRequirement' => $baseDir . '/app/BankTransferRequirement.php',
     'App\\Console\\Commands\\FinishDurationCommand' => $baseDir . '/app/Console/Commands/FinishDurationCommand.php',

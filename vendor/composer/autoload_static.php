@@ -420,6 +420,23 @@ class ComposerStaticInit93367d8317a9e439d1569a33719b9f2a
     );
 
     public static $classMap = array (
+        'AddCacadeReferanceToBankTransferTable' => __DIR__ . '/../..' . '/database/migrations/2018_09_29_211610_add_cacade_referance_to_bank_transfer_table.php',
+        'AddCacadeReferanceToMediaTable' => __DIR__ . '/../..' . '/database/migrations/2018_09_29_211726_add_cacade_referance_to_media_table.php',
+        'AddCacadeReferanceToMessageGroupsTable' => __DIR__ . '/../..' . '/database/migrations/2018_09_29_211314_add_cacade_referance_to_message_groups_table.php',
+        'AddCacadeReferanceToMessagesGroupsTable' => __DIR__ . '/../..' . '/database/migrations/2018_09_29_211913_add_cacade_referance_to_messages_groups_table.php',
+        'AddCacadeReferanceToMessagesTable' => __DIR__ . '/../..' . '/database/migrations/2018_09_29_205146_add_cacade_referance_to_messages_table.php',
+        'AddCacadeReferanceToRepliesForMessageIdTable' => __DIR__ . '/../..' . '/database/migrations/2018_09_29_212040_add_cacade_referance_to_replies_for_message_id_table.php',
+        'AddCacadeReferanceToRepliesTable' => __DIR__ . '/../..' . '/database/migrations/2018_09_29_205342_add_cacade_referance_to_replies_table.php',
+        'AddCacadeReferanceToSuvaryForMessageIdTable' => __DIR__ . '/../..' . '/database/migrations/2018_09_29_212323_add_cacade_referance_to_suvary_for_message_id_table.php',
+        'AddCacadeReferanceToSuvaryResultsForMessageIdTable' => __DIR__ . '/../..' . '/database/migrations/2018_09_29_212203_add_cacade_referance_to_suvary_results_for_message_id_table.php',
+        'AddCacadeReferanceToSuvaryResultsTable' => __DIR__ . '/../..' . '/database/migrations/2018_09_29_205726_add_cacade_referance_to_suvary_results_table.php',
+        'AddCacadeReferanceToUserGroupTable' => __DIR__ . '/../..' . '/database/migrations/2018_09_29_205904_add_cacade_referance_to_user_group_table.php',
+        'AddCacadeReferanceToUserGroupsTable' => __DIR__ . '/../..' . '/database/migrations/2018_09_29_211454_add_cacade_referance_to_user_groups_table.php',
+        'AddCacadeReferanceToUserMessagesTable' => __DIR__ . '/../..' . '/database/migrations/2018_09_29_210524_add_cacade_referance_to_user_messages_table.php',
+        'AddCacadeReferanceToUserMsgForMessageIdTable' => __DIR__ . '/../..' . '/database/migrations/2018_09_29_212529_add_cacade_referance_to_user_msg_for_message_id_table.php',
+        'AddCacadeReferanceToUserMsgSeenForMessageIdTable' => __DIR__ . '/../..' . '/database/migrations/2018_09_29_212428_add_cacade_referance_to_user_msg_seen_for_message_id_table.php',
+        'AddCacadeReferanceToUserSeenMessageTable' => __DIR__ . '/../..' . '/database/migrations/2018_09_29_210354_add_cacade_referance_to_user_seen_message_table.php',
+        'AddCacadeReferanceToUserTable' => __DIR__ . '/../..' . '/database/migrations/2018_09_29_204215_add_cacade_referance_to_user_table.php',
         'App\\Activity' => __DIR__ . '/../..' . '/app/Activity.php',
         'App\\BankTransferRequirement' => __DIR__ . '/../..' . '/app/BankTransferRequirement.php',
         'App\\Console\\Commands\\FinishDurationCommand' => __DIR__ . '/../..' . '/app/Console/Commands/FinishDurationCommand.php',

@@ -42,7 +42,8 @@ Route::group(['prefix' => version_api(), 'namespace' => namespace_api(), 'as' =>
         Route::get('group/{group_id}/{password?}', 'GroupController@getGroup');
         Route::get('waiting-group', 'GroupController@getWaitingGroupList');
         Route::post('accept-group', 'GroupController@postAcceptInvitation');
-
+        Route::get('send-virification-code', 'UserController@sendVirificationCode');
+        Route::post('reset-mobile-number', 'UserController@resetMobileNumber');
         Route::get('activities', 'ConstantController@getActivities');
         Route::get('organizations', 'ConstantController@getOrganizations');
         Route::get('interests', 'ConstantController@getInterests');

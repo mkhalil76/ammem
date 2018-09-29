@@ -21,6 +21,8 @@ use App\BankTransferRequirement;
 use App\Interest;
 use App\Activity;
 use App\UserMessageSeen;
+use Auth;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class UserController extends Controller
 {
@@ -394,8 +396,29 @@ class UserController extends Controller
         ]);
     } 
 
-    public function test()
+    /**
+     * function to remove user information
+     * 
+     * @param Request $request
+     * 
+     * @return  response
+     */
+    public function deleteMyAccount(Request $request)
     {
-        return "test";
-    }
+        $user_id = Auth::user()->id;
+
+        try {
+            $user = User::findOrFail($user_id);
+            $user->delete();
+            return response()->json([
+                'status' => true,
+                'message' => 'تم حذف المستخدم بنجاح' 
+            ]);
+        } catch (ModelNotFoundException $e){
+            return response()->json([
+                'status' => false,
+                'message' => 'هذا المستخدم غير موجود'
+            ]);
+        }    
+    } 
 }

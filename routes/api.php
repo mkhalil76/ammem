@@ -35,7 +35,7 @@ Route::group(['prefix' => version_api(), 'namespace' => namespace_api(), 'as' =>
         Route::put('user', 'UserController@putUser');
         Route::get('user/{user_id?}', 'UserController@getUser');
         Route::post('contacts','UserController@checkContacts');
-
+        Route::get('/delete-my-account', 'UserController@deleteMyAccount');
         Route::post('group/{group_id?}', 'GroupController@postGroup');
         Route::put('group', 'GroupController@putGroup');
         Route::get('groups', 'GroupController@getGroups');

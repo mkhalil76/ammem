@@ -420,5 +420,85 @@ class UserController extends Controller
                 'message' => 'هذا المستخدم غير موجود'
             ]);
         }    
+    }
+
+    /**
+     * function to send varification code for the user
+     * 
+     * @param Request $request
+     * 
+     * @return  response
+     */
+    public function sendVirificationCode(Request $request)
+    {
+        $user_id = Auth::user()->id;
+
+        try {
+            $user = User::findOrFail($user_id);
+            $activation_code = $this->generateActivationCode(5);
+            $resend = Mobily::send($user->mobile, 'Your activation code: ' . $activation_code);
+            if ($resend) {
+                $user->activation_code = $activation_code;
+                $user->password = bcrypt($activation_code);
+                $user->save();
+                return response()->json([
+                    'message' => 'تم ارسال رمز التفعيل بنجاح',
+                    'status' => true
+                ]);
+            }
+
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'message' => 'هذا المستخدم غير موجود',
+                'status' => true
+            ]);
+        }
+    }
+
+    /**
+     * function to reset user mobile number
+     * 
+     * @param  Request $request
+     * 
+     * @return  response 
+     */
+    public function resetMobileNumber(Request $request)
+    {
+        $rules = [
+            'activation_code' => 'required',
+            'new_mobile_numbere' => 'required'
+        ];
+
+        $validator = $this->makeValidation($request, $rules);
+        if (!$validator->getData()->status) {
+            return response()->json([
+                'message' => $validator,
+                'status' => false
+            ]);
+        }
+
+        $user_id = Auth::user()->id;
+        try {
+            $user = User::findOrFail($user_id);
+            if ($user->activation_code == $request->activation_code) {
+                $user->mobile = $request->new_mobile_numbere;
+                $user->save();
+
+                return response()->json([
+                    'status' => true,
+                    'message' => 'تم تحديث رقم الجوال بنجاح'
+                ]);
+            } else {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'رمز التفيل غير صحيح' ,
+                ]);
+            }
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'هذا المستخدم غير موجود',
+            ]);
+        }
     } 
 }

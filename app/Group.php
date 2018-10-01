@@ -22,7 +22,6 @@ class Group extends Model
     public function getImageAttribute($value)
     {
         return url('assets/upload/' . $value);
-
     }
 
     public function getStatusGroupAttribute()
@@ -62,5 +61,4 @@ class Group extends Model
             $model->slug = $model->id.str_random(30);
         });
     }
-
 }

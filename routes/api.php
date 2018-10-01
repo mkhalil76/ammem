@@ -39,6 +39,7 @@ Route::group(['prefix' => version_api(), 'namespace' => namespace_api(), 'as' =>
         Route::post('group/{group_id?}', 'GroupController@postGroup');
         Route::put('group', 'GroupController@putGroup');
         Route::get('groups', 'GroupController@getGroups');
+        Route::post('change-group-wallpaper', 'GroupController@changeGroupWallpaper');
         Route::get('group/{group_id}/{password?}', 'GroupController@getGroup');
         Route::get('waiting-group', 'GroupController@getWaitingGroupList');
         Route::post('accept-group', 'GroupController@postAcceptInvitation');
@@ -49,7 +50,6 @@ Route::group(['prefix' => version_api(), 'namespace' => namespace_api(), 'as' =>
         Route::get('interests', 'ConstantController@getInterests');
         Route::get('jobs', 'ConstantController@getJobs');
         Route::get('group-types', 'ConstantController@getGroupTypes');
-
         Route::post('media', 'MessageController@postMedia');
         Route::get('media/{media_id?}', 'MessageController@getMedia');
         Route::post('message/{message_id?}', 'MessageController@postMessage');
@@ -70,5 +70,7 @@ Route::group(['prefix' => version_api(), 'namespace' => namespace_api(), 'as' =>
         Route::post('bank-request','PaymentController@postBankRequirement');
         Route::get('requests','PaymentController@getPaymentRequest');
         Route::get('get-user-info', 'UserController@getUserInfo');
+        Route::get('search-for-contact', 'UserController@searchForContact');
+        Route::post('user-accept-or-reject-group', 'UserController@userAcceptOrRejectGroup');
     });
 });

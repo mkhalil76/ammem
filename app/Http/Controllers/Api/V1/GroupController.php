@@ -9,6 +9,8 @@ use App\UserGroup;
 use Hash;
 use Illuminate\Http\Request;
 use Mobily;
+use URL;
+use App\groupBackground;
 
 class GroupController extends Controller
 {
@@ -272,4 +274,27 @@ class GroupController extends Controller
             'status' => false
         ]);
     }
+
+    /**
+     * function to change the group background image
+     * 
+     * @param  Request $request
+     * 
+     * @return  response
+     */
+    public function changeGroupWallpaper(Request $request)
+    {   
+        $group_id = $request->group_id;
+
+        $background = new groupBackground;
+        $background->background = $this->upload($request, 'image');
+        $background->group_id = $group_id;
+        $background->save();
+
+        return response()->json([
+            'message' => 'تم تغير صورة المجموعة بنجاح',
+            'status' => true,
+            'background' => URL::to('/assets/upload/'.$background->background)
+        ]);
+    } 
 }

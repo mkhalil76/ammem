@@ -23,6 +23,8 @@ use App\Activity;
 use App\UserMessageSeen;
 use Auth;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\groupBackground;
+use URL;
 
 class UserController extends Controller
 {
@@ -319,6 +321,8 @@ class UserController extends Controller
         $user_groups = UserGroup::where('user_id', $user_id)->where('status', 'accept')->pluck('group_id')->toArray();
         $groups_id = array_unique($user_groups);
         $groups_id = Group::where('admin_status', 'accept')->whereIn('id', $groups_id)->pluck('id')->toArray();
+        $groups_background = groupBackground::whereIn('group_id', $groups_id)->pluck('group_id', 'background');
+
         $groups_collection = Group::whereIn('id', $groups_id);
         $groups_count = $groups_collection->count();
         $groups = $groups_collection->orderBy('created_at', 'DESC')->get();
@@ -377,6 +381,12 @@ class UserController extends Controller
         $user_seen_msg = $users_seen_collection->orderBy('created_at', 'DESC')->get();
 
         $user_info = User::findOrFail($user_id);
+        
+        $back_ground_array = [];
+        foreach ($groups_background->toArray() as $key => $value) {
+            $back_ground_array[$value] = URL::to('/assets/upload/'.$key);
+
+        }
         return response()->json([
             'groups' => $groups,
             'media' => $media,
@@ -392,6 +402,7 @@ class UserController extends Controller
             'activities' => $activities,
             'waiting_groups' => $waiting_groups,
             'user_info' => $user_info,
+            'groups_background' => $back_ground_array,
             'status' => true
         ]);
     } 
@@ -500,5 +511,116 @@ class UserController extends Controller
                 'message' => 'هذا المستخدم غير موجود',
             ]);
         }
-    } 
+    }
+
+    /**
+     * function to search for contacts by filter
+     * 
+     * @param Request $request
+     * 
+     * @return  response
+     */
+    public function searchForContact(Request $request)
+    {
+        $country = $request->country;
+        $region = $request->region;
+        $activity_name = $request->activity_name;
+        $organisation_name = $request->organisation_name;
+        $gender = $request->gender;
+        $mobile_number = $request->mobile_number;
+
+        $users_list = [];
+        if ($mobile_number) {
+            $user = User::where('status', '=', 'active')
+                ->where('mobile', '=', $mobile_number)
+                ->get();
+            return response()->json([
+                'users_list' => $user,
+                'status' => true
+            ]);    
+        } else {
+            $user = User::where('status', '=', 'active');
+            if ($country) {
+                $user = $user->where('country', '=', $country);
+            }
+            if ($region) {
+                $user = $user->where('region', '=', $region);
+            }
+            if ($activity_name) {
+                $user = $user->where('activity_name', '=', $activity_name);
+            }
+            if ($organisation_name) {
+                $user = $user->where('organisation_name', '=', $organisation_name);
+            }
+            if ($gender) {
+                $user = $user->where('gender', '=', $gender);
+            }
+
+            $user = $user->get();
+            return response()->json([
+                'users_list' => $user,
+                'status' => true
+            ]);  
+        }
+
+    }
+
+    /**
+     * function to accept or reject group invitaion by user
+     * 
+     * @param  Request $request
+     * 
+     * @return response
+     */
+    public function userAcceptOrRejectGroup(Request $request)
+    {
+        $status = $request->status;
+        $group_id = $request->group_id;
+        $user_id = Auth::user()->id;
+
+        $user_group = UserGroup::where('user_id', '=', $user_id)
+            ->where('group_id', '=', $group_id)
+            ->first();
+        if (!empty($user_group)) {
+            if ($status == "accept") {
+            
+            try {
+                $update_user_group = UserGroup::findOrFail($user_group->id);
+                $update_user_group->status = "accept";
+                $update_user_group->save();
+                return response()->json([
+                    'ststus' => true,
+                    'message' => 'تم قبول طلب الانضمام الى المجموعة',
+                ]);
+            } catch (ModelNotFoundException $e) {
+                return response()->json([
+                    'ststus' => false,
+                    'message' => $e,
+                ]);
+            }
+
+            
+        } else {
+            try {
+                $update_user_group = UserGroup::findOrFail($user_group->id);
+                $update_user_group->status = "reject";
+                $update_user_group->save();
+                return response()->json([
+                    'ststus' => true,
+                    'message' => 'تم رفض طلب الانضمام الى المجموعة',
+                ]);
+            } catch (ModelNotFoundException $e) {
+                return response()->json([
+                    'ststus' => false,
+                    'message' => $e,
+                ]);
+            }
+        }
+        } else {
+            return response()->json([
+                'ststus' => false,
+                'message' => 'هذا المستخدم لم يتم ارسال له اي طلب للانضمام  لهذه المجموعة',
+            ]);
+        }
+    }
 }

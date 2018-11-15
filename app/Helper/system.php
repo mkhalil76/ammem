@@ -33,6 +33,10 @@ function admin_middleware()
     return 'admin';
 }
 
+function users_site_vw()
+{
+    return 'web';
+}
 function admin_url()
 {
     return 'admin';

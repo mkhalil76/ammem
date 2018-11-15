@@ -8,17 +8,18 @@
         "php": ">=5.6.4",
         "abdullahobaid/mobilywslaraval": "dev-master",
         "brozot/laravel-fcm": "1.2.*",
+        "kreait/firebase-php": "4.0",
         "laravel/framework": "5.4.*",
         "laravel/passport": "4.0.3",
         "laravel/tinker": "~1.0",
         "laravelcollective/html": "^5.4.0",
         "laravelrus/localized-carbon": "2.2",
+        "mpociot/laravel-firebase-sync": "~1.0",
         "nesbot/carbon": "^1.29",
         "phpoffice/phpexcel": "^1.8",
         "pusher/pusher-php-server": "^3.0",
         "symfony/css-selector": "4.0.3",
-        "yajra/laravel-datatables-oracle": "8.3.3",
-        "mpociot/laravel-firebase-sync": "~1.0"
+        "yajra/laravel-datatables-oracle": "8.3.3"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

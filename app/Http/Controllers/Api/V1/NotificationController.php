@@ -84,7 +84,7 @@ class NotificationController extends Controller
         $my_notifications = $my_notifications_collection->orderBy('created_at', 'desc')->get();
 
         return response()->json([
-            'my_notifications' => $my_notifications,
+            'item' => $my_notifications,
             'status' => true
         ]);
     }

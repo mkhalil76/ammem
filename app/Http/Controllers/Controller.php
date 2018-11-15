@@ -205,22 +205,22 @@ class Controller extends BaseController
         $notification = $notificationBuilder->build();
         $data = $dataBuilder->build();
 
-// You must change it to get your tokens
+        // You must change it to get your tokens
         $downstreamResponse = FCM::sendTo($tokens, $option, $notification, $data);
 
-//return Array - you must remove all this tokens in your database
+        //return Array - you must remove all this tokens in your database
         $downstreamResponse->tokensToDelete();
 
-//return Array (key : oldToken, value : new token - you must change the token in your database )
+        //return Array (key : oldToken, value : new token - you must change the token in your database )
         $downstreamResponse->tokensToModify();
 
-//return Array - you should try to resend the message to the tokens in the array
+        //return Array - you should try to resend the message to the tokens in the array
         $downstreamResponse->tokensToRetry();
 
-// return Array (key:token, value:errror) - in production you should remove from your database the tokens present in this array
+        // return Array (key:token, value:errror) - in production you should remove from your database the tokens present in this array
         $downstreamResponse->tokensWithError();
 
-// return Array (key:token, value:errror) - in production you should remove from your database the tokens
+        // return Array (key:token, value:errror) - in production you should remove from your database the tokens
         $object = [
             'numberSuccess' => $downstreamResponse->numberSuccess(),
             'numberFailure' => $downstreamResponse->numberFailure(),

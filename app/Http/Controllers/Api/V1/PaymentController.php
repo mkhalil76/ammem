@@ -43,7 +43,8 @@ class PaymentController extends Controller
             $bank_transfer_require->transfer_price = (double)$group_type->cost;
             $bank_transfer_require->save();
             return response()->json([
-                'bank_transfer_require' => $bank_transfer_require,
+                'item' => $bank_transfer_require,
+                'message' => 'تم اضافة بيانات الحساب بنجاح'
                 'status' => true
             ]);
 
@@ -64,7 +65,7 @@ class PaymentController extends Controller
         $requests = $requests_collection->orderBy('created_at', 'DESC')->get();
 
         return response()->json([
-            'requests' => $requests,
+            'item' => $requests,
             'status' => true
         ]);
 

@@ -15,13 +15,16 @@ use App\UserGroup;
 use App\UserMessage;
 use App\UserMessageSeen;
 use Illuminate\Http\Request;
+use Kreait\Firebase;
+use Kreait\Firebase\Factory;
+use Kreait\Firebase\ServiceAccount;
+use Kreait\Firebase\Database;
 
 class MessageController extends Controller
 {
     //add new message that you want to share in group/s
     public function postMessage(Request $request)
     {
-
         if (!$request->has('draft'))
             $rules = [
                 'title' => 'required',
@@ -165,8 +168,9 @@ class MessageController extends Controller
 
                 $message = Message::find($message->id);
                 return response()->json([
-                    'message' => $message,
-                    'status' => true
+                    'item' => $this->storeInFireBase($message),
+                    'message' => 'تم انشاء الرسالة بنجاح' ,
+                    'status' => true,
                 ]);
             }
         }
@@ -314,7 +318,8 @@ class MessageController extends Controller
 
                 $message = Message::find($message->id);
                 return response()->json([
-                    'message' => $message,
+                    'item' => $this->storeInFireBase($message),
+                    'message' => 'تم تعديل الرسالة بنجاح',
                     'status' => true
                 ]);
             }
@@ -338,7 +343,7 @@ class MessageController extends Controller
         $messages_count = $messages_collection->count();
         $messages = $messages_collection->orderBy('pin', 'DESC')->orderBy('created_at', 'DESC')->get();
         return response()->json([
-            'messages' => $messages,
+            'item' => current($this->getFromFireBase()),
             'status' => true
         ]);
 
@@ -366,7 +371,7 @@ class MessageController extends Controller
                 $message_user_seen->save();
             }
             return response()->json([
-                'messages' => $message,
+                'item' => $message,
                 'status' => true
             ]);
         }
@@ -404,7 +409,7 @@ class MessageController extends Controller
                 $result->user_id = auth()->user()->id;
                 $result->save();
                 return response()->json([
-                    'user' => $result,
+                    'item' => $result,
                     'status' => true
                 ]);
             }
@@ -452,7 +457,7 @@ class MessageController extends Controller
                     $this->sendNotification(auth()->user()->id, $message->user_id, $reply->id, 'reply', null, 'رد جديدة');
                     $this->pusher->trigger('my-channel' . $group->slug, 'my-event', $data);
                     return response()->json([
-                        'replay' => $reply,
+                        'item' => $reply,
                         'status' => true
                     ]);
                 }
@@ -481,7 +486,7 @@ class MessageController extends Controller
         $media->name = $this->upload($request, 'media');
         $media->type = $request->get('type');
         return response()->json([
-            'media' => $media,
+            'item' => $media,
             'status' => true
         ]);
     }
@@ -514,7 +519,7 @@ class MessageController extends Controller
             $media = $media_collection->orderBy('created_at', 'DESC')->get();*/
 
             return response()->json([
-                'media' => $media,
+                'item' => $media,
                 'status' => true
             ]);
 /*        }
@@ -547,7 +552,7 @@ class MessageController extends Controller
 
             }
             return response()->json([
-                'search' => $search,
+                'item' => $search,
                 'status' => true
             ]);
         }
@@ -570,7 +575,7 @@ class MessageController extends Controller
         $messages_count = $messages_collection->count();
         $messages = $messages_collection->orderBy('pin', 'DESC')->orderBy('created_at', 'DESC')->get();
         return response()->json([
-            'messages' => $messages,
+            'item' => $messages,
             'status' => true
         ]);
 
@@ -600,7 +605,7 @@ class MessageController extends Controller
                 'is_archived' => 1
             ]);
             return response()->json([
-                'message' => $exist_message,
+                'item' => $exist_message,
                 'status' => true
             ]);
 
@@ -623,7 +628,7 @@ class MessageController extends Controller
         $messages_count = $messages_collection->count();
         $messages = $messages_collection->orderBy('pin', 'DESC')->orderBy('created_at', 'DESC')->get();
         return response()->json([
-            'messages' => $messages,
+            'item' => $messages,
             'status' => true
         ]);
 
@@ -648,7 +653,7 @@ class MessageController extends Controller
             $message->is_draft = 1;
             $message->save();
             return response()->json([
-                'message' => $message,
+                'item' => $message,
                 'status' => true
             ]);
         }
@@ -669,9 +674,52 @@ class MessageController extends Controller
         $users = $users_seen_collection->orderBy('created_at', 'DESC')->get();
 
         return response()->json([
-            'user_seen_messages' => $users,
+            'item' => $users,
             'status' => true,
         ]);
 
+    }
+
+    /**
+     * function to push data to realtime database
+     * 
+     * @param object $message
+     * 
+     * @return  response
+     */
+    public function storeInFireBase($message)
+    {
+        $serviceAccount = ServiceAccount::fromJsonFile(__DIR__.'/ammem-a0240-385b3d3ec166.json');
+        $firebase = (new Factory)
+            ->withServiceAccount($serviceAccount)
+            ->withDatabaseUri('https://ammem-a0240.firebaseio.com/')
+            ->create();
+
+        $database = $firebase->getDatabase();
+        $newMsg = $database
+            ->getReference('ammem/messages')
+            ->push([$message]);
+
+        return $newMsg->getvalue();    
+    }
+
+    /**
+     * function to get messages from firebase
+     * 
+     * @param Integer $message_id
+     * 
+     * @return  object
+     */
+    public function getFromFireBase($message_id = null)
+    {
+        $serviceAccount = ServiceAccount::fromJsonFile(__DIR__.'/ammem-a0240-385b3d3ec166.json');
+        $firebase = (new Factory)
+            ->withServiceAccount($serviceAccount)
+            ->withDatabaseUri('https://ammem-a0240.firebaseio.com/')
+            ->create();
+
+        $database = $firebase->getDatabase();
+        $reference = $database->getReference('ammem/messages');
+        return $reference->getvalue();
     }
 }

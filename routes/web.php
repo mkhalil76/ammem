@@ -86,9 +86,8 @@ Route::get(user_vw().'/login', 'HomeController@UserLogin');
 Route::post(user_vw().'/sign-up', 'UserController@postUser');
 Route::post(user_vw().'/login', 'HomeController@postUserLogin');
 Route::post(user_vw().'/send-activation', 'HomeController@sendActivationCode');
-
 Route::group(['middleware' => 'user', 'prefix' => user_vw()], function () {
-
+    
     Route::get('profile/{user_id?}', 'UserController@edit');
     Route::put('profile/{user_id?}', 'UserController@putUser');
 

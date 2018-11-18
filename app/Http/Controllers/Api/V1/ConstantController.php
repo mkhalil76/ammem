@@ -23,7 +23,7 @@ class ConstantController extends Controller
         $activities = Activity::orderBy('created_at', 'desc')->get();
 
         return response()->json([
-            'activities' => $activities,
+            'item' => $activities,
             'status' => true
         ]);
     }
@@ -38,7 +38,7 @@ class ConstantController extends Controller
         $organizations_count = Organization::count();
         $organizations = Organization::orderBy('created_at', 'desc')->get();
         return response()->json([
-            'organizations' => $organizations,
+            'item' => $organizations,
             'status' => true
         ]);
 
@@ -55,7 +55,7 @@ class ConstantController extends Controller
         $interests = Interest::orderBy('created_at', 'desc')->get();
 
         return response()->json([
-            'interests' => $interests,
+            'item' => $interests,
             'status' => true
         ]);
 
@@ -72,7 +72,7 @@ class ConstantController extends Controller
         $jobs = Job::orderBy('created_at', 'desc')->get();
 
         return response()->json([
-            'jobs' => $jobs,
+            'item' => $jobs,
             'status' => true
         ]);
     }
@@ -88,7 +88,7 @@ class ConstantController extends Controller
         $group_types = GroupType::orderBy('created_at', 'desc')->get();
 
         return response()->json([
-            'group_types' => $group_types,
+            'item' => $group_types,
             'status' => true
         ]);
 

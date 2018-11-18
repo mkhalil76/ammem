@@ -132,22 +132,18 @@ class UserController extends Controller
 
 // add new user and send activation code
     public function postUser(Request $request)
-    {
+    {   
         $rules = [
-            'country' => 'required',
             'mobile' => 'required|unique:users,mobile',
-            'email' => 'required|email|unique:users,email',
-            'name' => 'required',
-            'region' => 'required',
-            'activity_id' => 'required|exists:activities,id',
-            'organization_id' => 'required|exists:organizations,id',
-            'interest_id' => 'required|exists:interests,id',
+            'username' => 'required',
             'gender' => 'required|in:male,female',
-            'job_id' => 'required|exists:jobs,id',
         ];
         $validator = $this->makeValidation($request, $rules);
         if (!$validator->getData()->status) {
-            return $validator;
+            return response()->json([
+                'status' => false,
+                'errors' => $validator
+            ]);
         }
         $activation_code = $this->generateActivationCode(5);
         $user = new User();
@@ -167,9 +163,9 @@ class UserController extends Controller
 
         if ($user->save()) {
             Mobily::send($request->get('mobile'), 'Your activation code: ' . $activation_code);
-            return response_api(true, $user);
+            //return response_api(true, $user);
         }
-        return response_api(false);
+        //return response_api(false);
     }
 
     public function edit($user_id = null)
@@ -237,4 +233,15 @@ class UserController extends Controller
         ]);
         return response_api($user->save());
     }
+
+
+    /**
+     * function to show user home page
+     * 
+     * @return  view
+     */
+    public function home()
+    {   
+        return view(users_site_vw().'index');
+    } 
 }

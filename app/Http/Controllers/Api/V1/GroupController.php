@@ -85,7 +85,7 @@ class GroupController extends Controller
                 }
                 $group = Group::find($group->id);
                 return response()->json([
-                    'group' => $group,
+                    'item' => $group,
                     'status' => true
                 ]);
             }
@@ -167,7 +167,7 @@ class GroupController extends Controller
                 }
                 $group = Group::find($group->id);
                 return response()->json([
-                    'group' => $group,
+                    'item' => $group,
                     'status' => true
                 ]);
             }
@@ -195,7 +195,7 @@ class GroupController extends Controller
         $groups_count = $groups_collection->count();
         $groups = $groups_collection->orderBy('created_at', 'DESC')->get();
         return response()->json([
-            'groups' => $groups,
+            'item' => $groups,
             'status' => true
         ]);
     }
@@ -209,12 +209,12 @@ class GroupController extends Controller
         if (isset($user_groups)) {
             $group = Group::where('admin_status', 'accept')->find($group_id);
             return response()->json([
-                'group' => $group,
+                'item' => $group,
                 'status' => true
             ]);
         }
         return response()->json([
-            'group' => false,
+            'status' => false,
             'message' => 'عفوا هذه المجموعة غير متوفرة'
         ]);
     }
@@ -229,7 +229,7 @@ class GroupController extends Controller
             $groups_count = $groups_collection->count();
             $groups = $groups_collection->orderBy('created_at', 'DESC')->get();
             return response()->json([
-                'waiting_groups' => $groups,
+                'item' => $groups,
                 'count' => $groups_count,
                 'status' => true
             ]);
@@ -264,7 +264,7 @@ class GroupController extends Controller
             ]);
             return response()->json([
                 'message' => 'تمت الموافقه على المجموعة بنجاح ',
-                'user_group' => $user_group,
+                'item' => $user_group,
                 'status' => true
             ]);
         }
@@ -294,7 +294,7 @@ class GroupController extends Controller
         return response()->json([
             'message' => 'تم تغير صورة المجموعة بنجاح',
             'status' => true,
-            'background' => URL::to('/assets/upload/'.$background->background)
+            'item' => URL::to('/assets/upload/'.$background->background)
         ]);
     } 
 }

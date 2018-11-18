@@ -100,14 +100,15 @@ class UserController extends Controller
 
         $user = User::where('mobile', $request->get('mobile'))->first();
         if (isset($user)) {
-            $activation_code = $this->generateActivationCode(5);
+            $activation_code = $this->generateActivationCode(6);
             $resend = Mobily::send($request->get('mobile'), 'Your activation code: ' . $activation_code);
             if ($resend) {
                 $user->activation_code = $activation_code;
                 $user->password = bcrypt($activation_code);
                 $user->save();
                 return response()->json([
-                    'message' => $user,
+                    'item' => $user,
+                    'message' => 'تم ارسال رمز التفعيل بنجاح' ,
                     'status' => true
                 ]);
             }
@@ -146,7 +147,8 @@ class UserController extends Controller
         if ($user->save()) {
             Mobily::send($request->get('mobile'), 'Your activation code: ' . $activation_code);
             return response()->json([
-                'message' => $user,
+                'item' => $user,
+                'message' => 'تم انشاء مستخدم جديد بنجاح' ,
                 'status' => true
             ]);
         }
@@ -172,6 +174,7 @@ class UserController extends Controller
             'job_id' => 'required|exists:jobs,id',
             'bod' => 'required',
             'city' => 'required',
+            'email' => 'required'
         ];
         if ($request->has('mobile')) {
             $rules['old_activation_code'] = 'required';
@@ -199,10 +202,10 @@ class UserController extends Controller
         auth()->user()->photo_id = $request->get('photo_id');
         auth()->user()->gender = $request->get('gender');
         auth()->user()->job_id = $request->get('job_id');
-
+        auth()->user()->email = $request->get('email');
         if ($request->has('mobile') && auth()->user()->activation_code == $request->get('old_activation_code')){
 
-            $activation_code = $this->generateActivationCode(5);
+            $activation_code = $this->generateActivationCode(6);
             $resend = Mobily::send($request->get('mobile'), 'Your activation code: ' . $activation_code);
             if ($resend) {
                 auth()->user()->mobile = $request->get('mobile');
@@ -215,7 +218,8 @@ class UserController extends Controller
         if (auth()->user()->save()) {
             $user = User::find(auth()->user()->id);
             return response()->json([
-                'user' => $user,
+                'item' => $user,
+                'message' => 'تم تعديل بيانات المستخدم بنجاح' ,
                 'status' => true
             ]);
         }
@@ -274,7 +278,7 @@ class UserController extends Controller
         }
 
         return response()->json([
-            'user' => $user,
+            'item' => $user,
             'status' => true
         ]);
 
@@ -302,7 +306,7 @@ class UserController extends Controller
                 $users[] = $user;
         }
         return response()->json([
-            'users' => $users,
+            'item' => $users,
             'status' => true
         ]);
     }
@@ -446,7 +450,7 @@ class UserController extends Controller
 
         try {
             $user = User::findOrFail($user_id);
-            $activation_code = $this->generateActivationCode(5);
+            $activation_code = $this->generateActivationCode(6);
             $resend = Mobily::send($user->mobile, 'Your activation code: ' . $activation_code);
             if ($resend) {
                 $user->activation_code = $activation_code;
@@ -558,7 +562,7 @@ class UserController extends Controller
 
             $user = $user->get();
             return response()->json([
-                'users_list' => $user,
+                'item' => $user,
                 'status' => true
             ]);  
         }
@@ -590,6 +594,7 @@ class UserController extends Controller
                 $update_user_group->save();
                 return response()->json([
                     'ststus' => true,
+                    'item' => $user_group,
                     'message' => 'تم قبول طلب الانضمام الى المجموعة',
                 ]);
             } catch (ModelNotFoundException $e) {

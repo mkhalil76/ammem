@@ -60,7 +60,7 @@ class HomeController extends Controller
         ];
 //        $activities
 //        dd(session()->get('is_sent_activation_code'));
-        return view(admin_users_vw() . '.login', $data);
+        return view(users_site_vw() . '.login', $data);
 
     }
 

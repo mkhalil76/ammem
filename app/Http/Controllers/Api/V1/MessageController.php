@@ -485,8 +485,9 @@ class MessageController extends Controller
         $media = new Media();
         $media->name = $this->upload($request, 'media');
         $media->type = $request->get('type');
+        $media->save();
         return response()->json([
-            'item' => $media,
+            'items' => $media,
             'status' => true
         ]);
     }

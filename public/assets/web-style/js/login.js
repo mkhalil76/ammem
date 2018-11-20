@@ -3,20 +3,21 @@ $(document).ready(function () {
         var mobile = $('#mobile').val();
         $('#to_mobile_number').text("سوف نرسل رسالة نصية تختوي على زمز التوثيق الى "+mobile);
     });
-
     $('#post_new_user').click(function () {
-        if ($('#username').val() == "") {
-            $("#edit_info").click();
-            return false;
-        } 
-        if ($('#mobile').val() == "") {
+        if ($('#username').val() == "" || $('#mobile').val() == "" || $('#gender').val() == "") {
+            if ($('#username').val() == "") {
+                $('#username-error').text("يرجى ادخال اسم المستخدم");
+            } 
+            if ($('#mobile').val() == "") {
+                $('#mobile-error').text("يرجى ادخال رقم الهاتف ");
+            }
+            if ($('#gender').val() == "") {
+                $('#gender-error').text("يرجى اختيار الجنس");               
+            }
             $("#edit_info").click();
             return false;
         }
-        if ($('#gender').val() == "") {
-            $("#edit_info").click();
-            return false;
-        }
+        
         
         $.ajax({
             type: "POST",

@@ -15,6 +15,9 @@
       <link rel="stylesheet" href="{{url('/')}}/assets/web-style/css/material-design-iconic-font.min.css">
       <link rel="stylesheet" href="{{url('/')}}/assets/web-style/css/main.css">
       <link href="https://fonts.googleapis.com/css?family=Cairo" rel="stylesheet">
+      <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+         rel="stylesheet">
+      <link rel="stylesheet" href="{{ url('/')}}/assets/web-style/node_modules/intl-tel-input/build/css/intlTelInput.css">
       <script src="{{url('/')}}/assets/web-style/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
    </head>
    <body>
@@ -30,6 +33,7 @@
                                  <input class="InputNumber" type="text" name="" value="" required  placeholder="أدخل رقم الهاتف ">
                                  <button class="Nsubmit" type="submit" name="button">تسجيل دخول</button>
                               </form>
+                              <br/>
                               <div class="NewUser">
                                  <a href="#" data-toggle="modal" data-target="#myModal1"   >مستخدم جديد</a>
                               </div>
@@ -45,6 +49,7 @@
                                  <span>. بادر بالانضمام إلى عمم اليوم</span>
                                  <form class="butSin" action="index.html" method="post">
                                     <button  class="SelectButt" type="button" name="button" data-toggle="modal" data-target="#myModal1">مستخدم جديد</button>
+                                    <br/>
                                     <button  class="SelectBut" type="button" name="button">تسجيل الدخول</button>
                                  </form>
                               </div>
@@ -78,29 +83,27 @@
             </div>
             <div class="col-md-4">
                <div class="RigehtBox">
-
-                     <div class="row">
-                        <div class="col-md-4">
-                           <div class="AmmFeatures">
-                              <ui>
-                                 <li><i class="zmdi zmdi-accounts"></i> <span> تخصيص الإرسال
-                                    </span> 
-                                 </li>
-                                 <li><i class="zmdi zmdi-accounts"></i><span>تفاعل المستخدم
-                                    </span>
-                                 </li>
-                                 <li><i class="zmdi zmdi-accounts"></i><span>إضافة الاستبيان</span></li>
-                                 <li><i class="zmdi zmdi-accounts"></i><span>واجهة بسيطة</span></li>
-                              </ui>
-                           </div>
+                  <div class="row">
+                     <div class="col-md-4">
+                        <div class="AmmFeatures">
+                           <ui>
+                              <li><i class="zmdi zmdi-accounts"></i> <span> تخصيص الإرسال
+                                 </span> 
+                              </li>
+                              <li><i class="zmdi zmdi-accounts"></i><span>تفاعل المستخدم
+                                 </span>
+                              </li>
+                              <li><i class="zmdi zmdi-accounts"></i><span>إضافة الاستبيان</span></li>
+                              <li><i class="zmdi zmdi-accounts"></i><span>واجهة بسيطة</span></li>
+                           </ui>
                         </div>
-
+                     </div>
                   </div>
                </div>
             </div>
          </div>
       </section>
-      <div class="modal fade " id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
          <div class="modal-dialog">
             <div class="modal-content Edit-new-user">
                <div class="hade-new-user">
@@ -109,20 +112,26 @@
                   <button type="button" class="Edit-user-Btn-Next" id="signin">التالي</button>
                   <div class="Enter-User-info">
                      <meta name="csrf-token" content="{{ csrf_token() }}">
-
-                     <input required  type="text" id="username"  placeholder="أدخل اسم المستخدم">
+                     <div class="form-group">
+                     <label for="mobile" id="username-error"></label>
+                     <input class="form-control" type="text" id="username" name="name"  placeholder="أدخل اسم المستخدم" required="true">
+                  </div>
+                  <div class="form-group">
                      <label for="mobile" id="mobile-error"></label>
-                     <input required  type="text" id="mobile" placeholder="أدخل رقم المستخدم">
-                     <select required  class="form-control" id="gender" >
-                       <option value="" hidden >الجنس</option>
-                       <option value="male">ذكر</option>
-                       <option value="female">أنثى</option>
+                     <input type="tel" class="intl-tel-input"  id="mobile" name="mobile"required="true">
+                  </div>
+                  <div class="form-group">
+                     <label for="gender" id="gender-error"></label>
+                     <select class="form-control" id="gender" name="gender" required="true">
+                        <option value="" hidden >الجنس</option>
+                        <option value="male">ذكر</option>
+                        <option value="female">أنثى</option>
                      </select>
+                  </div>
                   </div>
                </div>
             </div>
          </div>
-      </div>
       </div>
       <div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
          <div class="modal-dialog">
@@ -139,14 +148,27 @@
             </div>
          </div>
       </div>
-      <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+      <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
       <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
       <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.min.js"></script>
-      <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.min.js"><\/script>')</script>
+      <script src="https://code.jquery.com/jquery-3.3.1.js"
+         integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+         crossorigin="anonymous"></script>
+      <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+         rel="stylesheet">
       <script src="{{url('/')}}/assets/web-style/js/vendor/bootstrap.min.js"></script>
       <script src="{{url('/')}}/assets/web-style/js/bubbly-bg.js"></script>
-      <script src="{{url('/')}}/assets/web-style/js/clipboard.minjs"></script>
+      <script src="{{url('/')}}/assets/web-style/js/clipboard.min.js"></script>
       <script src="{{url('/')}}/assets/web-style/js/main.js"></script>
       <script src="{{url('/')}}/assets/web-style/js/login.js"></script>
+      <script src="{{url('/')}}/assets/web-style/js/auth/NewAccount.js"></script>
+      <script src="{{ url('/')}}/assets/web-style/node_modules/intl-tel-input/build/js/intlTelInput.js"></script>
+      <script>
+         var input = document.querySelector("#mobile");
+         window.intlTelInput(input);
+         $("#mobile").parent().addClass("iti-rtl");
+      </script>   
    </body>
 </html>

@@ -23,7 +23,7 @@ class ConstantController extends Controller
         $activities = Activity::orderBy('created_at', 'desc')->get();
 
         return response()->json([
-            'item' => $activities,
+            'items' => $activities,
             'status' => true
         ]);
     }

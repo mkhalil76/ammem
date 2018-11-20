@@ -98,10 +98,10 @@ class UserController extends Controller
             return $validator;
         }
 
-        $user = User::where('mobile', $request->get('mobile'))->first();
+        $user = User::where('mobile', $this->formatMobileNumber($request->get('mobile')))->first();
         if (isset($user)) {
             $activation_code = $this->generateActivationCode(6);
-            $resend = Mobily::send($request->get('mobile'), 'Your activation code: ' . $activation_code);
+            $resend = Mobily::send($this->formatMobileNumber($request->get('mobile'), 'Your activation code: ' . $activation_code);
             if ($resend) {
                 $user->activation_code = $activation_code;
                 $user->password = bcrypt($activation_code);
@@ -130,8 +130,10 @@ class UserController extends Controller
         if (!$validator->getData()->status) {
             return $validator;
         }
+        $mobile_number = $this->formatMobileNumber($request->get('mobile'));
+
         $activation_code = $this->generateActivationCode(6);
-        Mobily::send($request->get('mobile'), 'Your activation code: ' . $activation_code);
+        Mobily::send($mobile_number, 'Your activation code: ' . $activation_code);
         $user = new User();
         if (!empty($request->get('country'))) {
             $user->country = $request->get('country');
@@ -139,13 +141,13 @@ class UserController extends Controller
             $user->country = "";
         }
         
-        $user->mobile = $request->get('mobile');
+        $user->mobile = $mobile_number;
         $user->email = $request->get('email');
         $user->activation_code = $activation_code;
         $user->password = bcrypt($activation_code);
 
         if ($user->save()) {
-            Mobily::send($request->get('mobile'), 'Your activation code: ' . $activation_code);
+            Mobily::send($mobile_number, 'Your activation code: ' . $activation_code);
             return response()->json([
                 'item' => $user,
                 'message' => 'تم انشاء مستخدم جديد بنجاح' ,
@@ -204,11 +206,11 @@ class UserController extends Controller
         auth()->user()->job_id = $request->get('job_id');
         auth()->user()->email = $request->get('email');
         if ($request->has('mobile') && auth()->user()->activation_code == $request->get('old_activation_code')){
-
+            $mobile_number = $this->formatMobileNumber($request->get('mobile'));
             $activation_code = $this->generateActivationCode(6);
-            $resend = Mobily::send($request->get('mobile'), 'Your activation code: ' . $activation_code);
+            $resend = Mobily::send($mobile_number, 'Your activation code: ' . $activation_code);
             if ($resend) {
-                auth()->user()->mobile = $request->get('mobile');
+                auth()->user()->mobile = $mobile_number;
                 auth()->user()->is_confirm = 0;
 
                 auth()->user()->activation_code = $activation_code;
@@ -218,7 +220,7 @@ class UserController extends Controller
         if (auth()->user()->save()) {
             $user = User::find(auth()->user()->id);
             return response()->json([
-                'item' => $user,
+                'items' => $user,
                 'message' => 'تم تعديل بيانات المستخدم بنجاح' ,
                 'status' => true
             ]);
@@ -240,7 +242,8 @@ class UserController extends Controller
         if (!$validator->getData()->status) {
             return $validator;
         }
-        $user = User::where('mobile', $request->get('mobile'))->where('activation_code', $request->get('activation_code'))->first();
+        $mobile_number = $this->formatMobileNumber($request->get('mobile'));
+        $user = User::where('mobile', $mobile_number)->where('activation_code', $request->get('activation_code'))->first();
         if (!isset($user)) {
             return response()->json([
                 'message' => 'عذرا المستخدم غير متوفر',
@@ -289,19 +292,18 @@ class UserController extends Controller
         $rules = [
             'contacts' => 'required',
         ];
-
         $validator = $this->makeValidation($request, $rules);
         if (!$validator->getData()->status) {
             return $validator;
         }
-
         $contacts = $request->get('contacts');
         $contacts = substr($contacts, 1, strlen($contacts) - 2);
         $contacts = explode(',', $contacts);
         $contacts = array_unique($contacts);
         $users = [];
         foreach ($contacts as $contact) {
-            $user = User::where('mobile', $contact)->first();
+            $mobile_number = $this->formatMobileNumber($contact);
+            $user = User::where('mobile', $mobile_number)->first();
             if (isset($user))
                 $users[] = $user;
         }
@@ -495,8 +497,9 @@ class UserController extends Controller
         $user_id = Auth::user()->id;
         try {
             $user = User::findOrFail($user_id);
+            $mobile_number = $this->formatMobileNumber($request->new_mobile_numbere);
             if ($user->activation_code == $request->activation_code) {
-                $user->mobile = $request->new_mobile_numbere;
+                $user->mobile = $mobile_number;
                 $user->save();
 
                 return response()->json([
@@ -531,7 +534,7 @@ class UserController extends Controller
         $activity_name = $request->activity_name;
         $organisation_name = $request->organisation_name;
         $gender = $request->gender;
-        $mobile_number = $request->mobile_number;
+        $mobile_number = $this->formatMobileNumber($request->mobile_number);
 
         $users_list = [];
         if ($mobile_number) {
@@ -628,4 +631,19 @@ class UserController extends Controller
             ]);
         }
     }
+
+    /**
+     * function to format phone number
+     * 
+     * @param  String $mobile_number
+     * 
+     * @return  string
+     */
+    public function formatMobileNumber($mobile_number)
+    {
+        if ($mobile_number[0] == "+") {
+            $mobile_number = str_replace($mobile_number[0], "00", $mobile_number);
+        }
+        return $mobile_number;
+    } 
 }

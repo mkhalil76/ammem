@@ -1,0 +1,1 @@
+[29-Sep-2018 22:03:22 UTC] PHP Warning:  putenv(): Invalid parameter syntax in /var/www/html/vendor/vlucas/phpdotenv/src/Loader.php on line 382

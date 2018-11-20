@@ -124,11 +124,16 @@ class UserController extends Controller
     {   
         $rules = [
             'mobile' => 'required|unique:users,mobile',
-            'email' => 'sometimes|unique:users'
+            'email' => 'sometimes|unique:users',
+            'country' => 'sometimes'
         ];
         $validator = $this->makeValidation($request, $rules);
         if (!$validator->getData()->status) {
-            return $validator;
+            return response()->json([
+                'status' => false,
+                'message' => 'رقم الجوال موجود مسبقا ' ,
+                'errors' => $validator->getData()->message
+            ]);
         }
         $activation_code = $this->generateActivationCode(6);
         Mobily::send($request->get('mobile'), 'Your activation code: ' . $activation_code);
@@ -147,7 +152,7 @@ class UserController extends Controller
         if ($user->save()) {
             Mobily::send($request->get('mobile'), 'Your activation code: ' . $activation_code);
             return response()->json([
-                'item' => $user,
+                'items' => $user,
                 'message' => 'تم انشاء مستخدم جديد بنجاح' ,
                 'status' => true
             ]);
@@ -218,7 +223,7 @@ class UserController extends Controller
         if (auth()->user()->save()) {
             $user = User::find(auth()->user()->id);
             return response()->json([
-                'item' => $user,
+                'items' => $user,
                 'message' => 'تم تعديل بيانات المستخدم بنجاح' ,
                 'status' => true
             ]);
@@ -278,7 +283,7 @@ class UserController extends Controller
         }
 
         return response()->json([
-            'item' => $user,
+            'items' => $user,
             'status' => true
         ]);
 
@@ -306,7 +311,7 @@ class UserController extends Controller
                 $users[] = $user;
         }
         return response()->json([
-            'item' => $users,
+            'items' => $users,
             'status' => true
         ]);
     }
@@ -562,7 +567,7 @@ class UserController extends Controller
 
             $user = $user->get();
             return response()->json([
-                'item' => $user,
+                'items' => $user,
                 'status' => true
             ]);  
         }
@@ -594,7 +599,7 @@ class UserController extends Controller
                 $update_user_group->save();
                 return response()->json([
                     'ststus' => true,
-                    'item' => $user_group,
+                    'items' => $user_group,
                     'message' => 'تم قبول طلب الانضمام الى المجموعة',
                 ]);
             } catch (ModelNotFoundException $e) {

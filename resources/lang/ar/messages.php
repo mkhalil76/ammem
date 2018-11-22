@@ -1,0 +1,33 @@
+<?php
+
+
+	return [
+		'error_msg' => 'حدث خطا ما حاول مرة اخرى ',
+		'resend_activiation_code' => 'تم اعادة ارسال رمز التفعيل بنجاح',
+		'create_new_user' => 'تم انشاء حسابك بنجاح يرجى تفعيل الحساب' ,
+		'update_user_info' => 'تم تعديل بيانات حسابك بنجاح ',
+		'not_exist_user' => ' عذرا هذا المستخدم غير متوفر' ,
+		'get_user_info_msg' => 'تم جلب بيانات المستخدم بنجاح ',
+		'fetch_data_msg' => 'تم جلب البيانات بنجاح',
+		'delete_account_msg' => 'تم حذف بيانات المستخدم بنجاح ',
+		'send_activiation_code' => 'تم اسال رمز التفعيل بنجاح ',
+		'successfully_update_mobile_number' => 'تم تحديث رقم الجوال بنجاح ',
+		'accept_join_group' => ' تم قبول طلب الانضمام الى المجموعة بنجاح ',
+		'reject_join_group' => 'تم رفض طلب الانضمام الى المجموعة بنجاح ',
+		'request_not_exist' => 'لايوجد طلب انضمام لهذه المجموعة ',
+		'new_group' => 'مجموعة جديدة ',
+		'create_new_group' => 'تم انشاء مجموعة جديدة بنجاح ',
+		'update_group' => 'تم تعديل بيانات المجموعة بنجاح ',
+		'accept_group' => 'تمت الموافقة على المجموعة بنجاح ',
+		'group_change_image' => 'تم تغير صورة المجموعة بنجاح ',
+		'new_generalization' => 'تم انشاء تعميم جديد بنجاح' ,
+		'update_generalization' =>  'تم تعديل التعميم بنجاح ' ,
+		'updated_successfully' => 'تم التحديث' ,
+		'successfully_done' => 'تم بنجاح  ',
+		'mobile_or_activation_not_exist' => 'تاكد من رمز التفعيل او رقم الجوال ' ,
+		'excced_number_of_send_activation_code' => 'عذرا لقد تجاوزت الحد المسموح به  لارسال رمز التفعيل لهذا الشهر ',
+		'user_exist_msg' => 'عذرا رقم الجوال مربوط بحساب اخر يرجى اختيار رقم جوال اخر ',
+		'group_not_found' => 'عذرا  المجموعة المدخلة غير موجودة ',
+		'member_not_exist' => 'عذرا تاكد من الاعضاء المضافين الى المجموعة ',
+		'not_exist_media' => 'عذرا ملف الوسائط المدخل غير موجود ',
+ 	];

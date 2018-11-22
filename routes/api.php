@@ -26,16 +26,20 @@
 Route::group(['prefix' => version_api(), 'namespace' => namespace_api(), 'as' => 'api.'], function () {
 
     Route::post('login', 'UserController@access_token');
-    Route::post('refresh_token', 'UserController@refresh_token');
     Route::post('user', 'UserController@postUser');
     Route::post('confirm_activation', 'UserController@confirmActivationCode');
     Route::post('resend-activation-code','UserController@resendActivationCode');
-
+    Route::get('activities', 'ConstantController@getActivities');
+    Route::get('organizations', 'ConstantController@getOrganizations');
+    Route::get('interests', 'ConstantController@getInterests');
+    Route::get('jobs', 'ConstantController@getJobs');
+    
     Route::group(['middleware' => 'auth:api'], function () {
         Route::put('user', 'UserController@putUser');
         Route::get('user/{user_id?}', 'UserController@getUser');
         Route::post('contacts','UserController@checkContacts');
         Route::get('/delete-my-account', 'UserController@deleteMyAccount');
+        Route::get('confirm-delete-my-account/{activation_code}', 'UserController@confirmDeleteMyAccount');
         Route::post('group/{group_id?}', 'GroupController@postGroup');
         Route::put('group', 'GroupController@putGroup');
         Route::get('groups', 'GroupController@getGroups');
@@ -45,10 +49,7 @@ Route::group(['prefix' => version_api(), 'namespace' => namespace_api(), 'as' =>
         Route::post('accept-group', 'GroupController@postAcceptInvitation');
         Route::get('send-virification-code', 'UserController@sendVirificationCode');
         Route::post('reset-mobile-number', 'UserController@resetMobileNumber');
-        Route::get('activities', 'ConstantController@getActivities');
-        Route::get('organizations', 'ConstantController@getOrganizations');
-        Route::get('interests', 'ConstantController@getInterests');
-        Route::get('jobs', 'ConstantController@getJobs');
+
         Route::get('group-types', 'ConstantController@getGroupTypes');
         Route::post('media', 'MessageController@postMedia');
         Route::get('media/{media_id?}', 'MessageController@getMedia');

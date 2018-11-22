@@ -25,7 +25,11 @@ class NotificationController extends Controller
         $validator = $this->makeValidation($request, $rules);
 
         if (!$validator->getData()->status) {
-            return $validator;
+            return response()->json([
+                'status' => false,
+                'message' => __('messages.error_msg'),
+                'errors' => $validator->getData()->message
+            ]);
         }
 
         $device = DeviceToken::where('user_id', auth()->user()->id)->where('device_token', $request->get('device_token'))->first();
@@ -48,18 +52,21 @@ class NotificationController extends Controller
             }
             $device->save();
             return response()->json([
-                'status' => true
+                'status' => true,
+                'items' => $device,
+                'message' => __('messages.successfully_done')
             ]);
         }  else {
             return response()->json([
-                'status' => true
+                'status' => true,
+                'message' => __('messages.successfully_done'),
+                'items' => $device
             ]);
         }   
     }
 
     public function postNotify(Request $request)
     {
-
 //        enum('block_user', 'admin', 'end_duration')
         $this->validate($request, [
             'receiver_id' => 'required|exists:users,id',
@@ -84,7 +91,8 @@ class NotificationController extends Controller
         $my_notifications = $my_notifications_collection->orderBy('created_at', 'desc')->get();
 
         return response()->json([
-            'item' => $my_notifications,
+            'items' => $my_notifications,
+            'message' => __('messages.fetch_data_msg'),
             'status' => true
         ]);
     }
@@ -92,6 +100,12 @@ class NotificationController extends Controller
     public function getStatus($token)
     {
         $device = DeviceToken::where('device_token', $token)->first();
-        return response_api(isset($device), $device);
+        if (!empty($device)) {
+            return response()->json([
+                'status' => true,
+                'messages' => __('messages.fetch_data_msg'),
+                'items' => $device
+            ]);
+        }
     }
 }

@@ -19,9 +19,23 @@ use Kreait\Firebase;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\ServiceAccount;
 use Kreait\Firebase\Database;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Auth;
 
 class MessageController extends Controller
-{
+{   
+    private $serviceAccount;
+
+    private $firebase;
+
+    function __construct()
+    {
+        $this->serviceAccount = ServiceAccount::fromJsonFile(__DIR__.'/ammem-a0240-385b3d3ec166.json');
+        $this->firebase = (new Factory)
+            ->withServiceAccount($this->serviceAccount)
+            ->withDatabaseUri('https://ammem-a0240.firebaseio.com/')
+            ->create();
+    }
     //add new message that you want to share in group/s
     public function postMessage(Request $request)
     {
@@ -44,7 +58,11 @@ class MessageController extends Controller
         $validator = $this->makeValidation($request, $rules);
 
         if (!$validator->getData()->status) {
-            return $validator;
+            return response()->json([
+                'status' => false,
+                'message' => __('messages.error_msg'),
+                'errors' => $validator->getData()->message
+            ]);
         }
 
         $message = null;
@@ -60,20 +78,27 @@ class MessageController extends Controller
             $group_ids = explode(',', $group_ids);
 
             foreach ($group_ids as $group_id) {
-                $group = Group::find((int)$group_id);
-                if ($group->type_id == 3) {
-                    $free_group = true;
-                }
-                if ($group->status == 'closed') {
-                    if ($group->user_id == auth()->user()->id) {
-                        $groups_data_id[] = (int)$group_id;
+                try {
+                    $group = Group::findOrFail((int)$group_id);
+                    if ($group->type_id == 3) {
+                        $free_group = true;
+                    }
+                    if ($group->status == 'closed') {
+                        if ($group->user_id == auth()->user()->id) {
+                            $groups_data_id[] = (int)$group_id;
 
+                        }
+                    } else {
+                        $user_group = UserGroup::where('user_id', auth()->user()->id)->whereIn('group_id', (int)$group_id)->first();
+                        if (isset($user_group) || $group->user_id == auth()->user()->id) {
+                            $groups_data_id[] = (int)$group_id;
+                        }
                     }
-                } else {
-                    $user_group = UserGroup::where('user_id', auth()->user()->id)->whereIn('group_id', (int)$group_id)->first();
-                    if (isset($user_group) || $group->user_id == auth()->user()->id) {
-                        $groups_data_id[] = (int)$group_id;
-                    }
+                } catch (ModelNotFoundException $e) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => __('messages.group_not_found')
+                    ]);
                 }
             }
 
@@ -124,11 +149,18 @@ class MessageController extends Controller
                     $members = explode(',', $members);
 
                     foreach ($members as $member_id) {
-                        $user_message = new UserMessage();
-                        $user_message->message_id = $message->id;
-                        $user_message->user_id = (int)$member_id;
-                        $user_message->save();
-
+                        try {
+                            $user = User::findOrFail($member_id);
+                            $user_message = new UserMessage();
+                            $user_message->message_id = $message->id;
+                            $user_message->user_id = (int)$member_id;
+                            $user_message->save();
+                        } catch (ModelNotFoundException $e) {
+                            return response()->json([
+                                'status' => false,
+                                'message' => __('messages.member_not_exist')
+                            ]);
+                        }
                         $this->sendNotification(auth()->user()->id, (int)$member_id, $message->id, 'message', null, 'تعميم جديدة');
 
                     }
@@ -142,40 +174,51 @@ class MessageController extends Controller
                     $media_ids = explode(',', $media_ids);
                     $count_media = 0;
                     foreach ($media_ids as $media_id) {
-                        $media = Media::find((int)$media_id);
-                        $media->message_id = $message->id;
-                        $media->save();
-                        $count_media++;
-                        if ($count_media == 1 && $free_group) {
-                            break;
-                        }
+
+                        try {
+                            $media = Media::findOrFail((int)$media_id);
+                            $media->message_id = $message->id;
+                            $media->save();
+                            $count_media++;
+                            if ($count_media == 1 && $free_group) {
+                                break;
+                            }
+                        } catch (ModelNotFoundException $e) {
+                            return response()->json([
+                                'status' => false,
+                                'message' => __('messages.not_exist_media')
+                            ]);
+                        }    
                     }
                 }
                 if ($request->has('type') && $request->get('type') == 'message_survey') {
 
                     $surveys = $request->get('survey');
-                    //$surveys = substr($surveys, 1, strlen($surveys) - 2);
-                    //$surveys = explode(',', $surveys);
+                    $surveys = substr($surveys, 1, strlen($surveys) - 2);
+                    $surveys = explode(',', $surveys);
 
                     if ($request->has('survey'))
                         foreach ($surveys as $survey_name) {
-                            $survey = new Survey();
+                            $survey = new Survey;
                             $survey->name = $survey_name;
                             $survey->message_id = $message->id;
                             $survey->save();
                         }
                 }
 
+                $user = Auth::user();
                 $message = Message::find($message->id);
+                $message['mobile'] = $user->mobile;
                 return response()->json([
-                    'item' => $this->storeInFireBase($message),
-                    'message' => 'تم انشاء الرسالة بنجاح' ,
+                    'items' => $this->storeInFireBase($message),
+                    'message' => __('messages.new_generalization'),
                     'status' => true,
                 ]);
             }
         }
         return response()->json([
-            'status' => true
+            'status' => true,
+            'message' => __('messages.error_msg')
         ]);
     }
 
@@ -204,7 +247,11 @@ class MessageController extends Controller
         $validator = $this->makeValidation($request, $rules);
 
         if (!$validator->getData()->status) {
-            return $validator;
+            return response()->json([
+                'status' => false,
+                'message' => __('messages.error_msg'),
+                'errors' => $validator->getData()->message
+            ]);
         }
 
         $message = null;
@@ -218,18 +265,26 @@ class MessageController extends Controller
             $group_ids = explode(',', $group_ids);
 
             foreach ($group_ids as $group_id) {
-                $group = Group::find((int)$group_id);
+                try {    
+                    $group = Group::findOrFail((int)$group_id);
 
-                if ($group->status == 'closed') {
-                    if ($group->user_id == auth()->user()->id) {
-                        $groups_data_id[] = (int)$group_id;
+                    if ($group->status == 'closed') {
+                        if ($group->user_id == auth()->user()->id) {
+                            $groups_data_id[] = (int)$group_id;
 
+                        }
+                    } else {
+                        $user_group = UserGroup::where('user_id', auth()->user()->id)->whereIn('group_id', (int)$group_id)->first();
+                        if (isset($user_group) || $group->user_id == auth()->user()->id) {
+                            $groups_data_id[] = (int)$group_id;
+                        }
                     }
-                } else {
-                    $user_group = UserGroup::where('user_id', auth()->user()->id)->whereIn('group_id', (int)$group_id)->first();
-                    if (isset($user_group) || $group->user_id == auth()->user()->id) {
-                        $groups_data_id[] = (int)$group_id;
-                    }
+
+                } catch (ModelNotFoundException$e) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => __('messages.group_not_found')
+                    ]);
                 }
             }
 
@@ -280,13 +335,20 @@ class MessageController extends Controller
                     $members = explode(',', $members);
 
                     foreach ($members as $member_id) {
-                        $user_message = new UserMessage();
-                        $user_message->message_id = $message->id;
-                        $user_message->user_id = (int)$member_id;
-                        $user_message->save();
+                        try {
+                            $user = User::findOrFail($member_id);
+                            $user_message = new UserMessage();
+                            $user_message->message_id = $message->id;
+                            $user_message->user_id = (int)$member_id;
+                            $user_message->save();
 
-                        $this->sendNotification(auth()->user()->id, (int)$member_id, $message->id, 'message', null, 'تعميم جديدة');
-
+                            $this->sendNotification(auth()->user()->id, (int)$member_id, $message->id, 'message', null, 'تعميم جديدة');
+                        } catch (ModelNotFoundException $e) {
+                            return response()->json([
+                                'status' => false,
+                                'message' => __('messages.member_not_exist')
+                            ]);
+                        }    
                     }
                 }
 
@@ -297,16 +359,24 @@ class MessageController extends Controller
                     $media_ids = explode(',', $media_ids);
 
                     foreach ($media_ids as $media_id) {
-                        $media = Media::find((int)$media_id);
-                        $media->message_id = $message->id;
-                        $media->save();
+                        
+                        try {
+                            $media = Media::findOrFail((int)$media_id);
+                            $media->message_id = $message->id;
+                            $media->save();
+                        } catch (ModelNotFoundException $e) {
+                            return response()->json([
+                                'status' => false,
+                                'message' => __('messages.not_exist_media')
+                            ]);
+                        }    
                     }
                 }
                 if ($request->has('type') && $request->get('type') == 'message_survey') {
 
                     $surveys = $request->get('survey');
-                    //$surveys = substr($surveys, 1, strlen($surveys) - 2);
-                    //$surveys = explode(',', $surveys);
+                    $surveys = substr($surveys, 1, strlen($surveys) - 2);
+                    $surveys = explode(',', $surveys);
                     if ($request->has('survey'))
                         foreach ($surveys as $survey_name) {
                             $survey = new Survey();
@@ -316,17 +386,20 @@ class MessageController extends Controller
                         }
                 }
 
+                $user = Auth::user();
                 $message = Message::find($message->id);
+                $message['mobile'] = $user->mobile;
+
                 return response()->json([
-                    'item' => $this->storeInFireBase($message),
-                    'message' => 'تم تعديل الرسالة بنجاح',
+                    'items' => $this->storeInFireBase($message),
+                    'message' => __('messages.update_generalization'),
                     'status' => true
                 ]);
             }
         }
 
         return response()->json([
-            'message' => 'حدث خطأ ما حاول مرة اخرى',
+            'message' => __('messages.error_msg'),
             'status' => false
         ]);
     }
@@ -343,7 +416,8 @@ class MessageController extends Controller
         $messages_count = $messages_collection->count();
         $messages = $messages_collection->orderBy('pin', 'DESC')->orderBy('created_at', 'DESC')->get();
         return response()->json([
-            'item' => current($this->getFromFireBase()),
+            'items' => $this->getFromFireBase(),
+            'message' => __('messages.fetch_data_msg'),
             'status' => true
         ]);
 
@@ -371,12 +445,13 @@ class MessageController extends Controller
                 $message_user_seen->save();
             }
             return response()->json([
-                'item' => $message,
+                'items' => $message,
+                'message' => __('messages.fetch_data_msg'),
                 'status' => true
             ]);
         }
         return response()->json([
-            'messages' => 'حدث خطأ ما حاول مرة اخرى',
+            'message' => __('messages.fetch_data_msg'),
             'status' => true
         ]);
     }
@@ -390,7 +465,11 @@ class MessageController extends Controller
         $validator = $this->makeValidation($request, $rules);
 
         if (!$validator->getData()->status) {
-            return $validator;
+            return response()->json([
+                'status' => false,
+                'message' => __('messages.error_msg'),
+                'errors' => $validator->getData()->message
+            ]);
         }
 
         $message_id = $request->message_id;
@@ -409,13 +488,14 @@ class MessageController extends Controller
                 $result->user_id = auth()->user()->id;
                 $result->save();
                 return response()->json([
-                    'item' => $result,
+                    'items' => $result,
+                    'message' => __('messages.updated_successfully'),
                     'status' => true
                 ]);
             }
         }
         return response()->json([
-            'message' => 'حدث خطأ ما حاول مرة اخرى',
+            'message' => __('messages.error_msg'),
             'status' => false
         ]);
     }
@@ -432,7 +512,11 @@ class MessageController extends Controller
         $validator = $this->makeValidation($request, $rules);
 
         if (!$validator->getData()->status) {
-            return $validator;
+            return response()->json([
+                'status' => false,
+                'message' => __('messages.error_msg'),
+                'errors' => $validator->getData()->message
+            ]);
         }
         $message_id = $request->message_id;
         $text = $request->text;
@@ -464,7 +548,7 @@ class MessageController extends Controller
             }
         }
         return response()->json([
-            'message' => 'حدث خطأ ما حاول مرة اخرى',
+            'message' => __('messages.successfully_done'),
             'status' => false
         ]);
     }
@@ -473,21 +557,27 @@ class MessageController extends Controller
     public function postMedia(Request $request)
     {   
         $rules = [
-            'media' => 'required',
-            'type' => 'required|in:image,audio,video,link,file'
+            'media' => 'required|max:30000|mimes:jpeg,bmp,png,avi,3gp,mp4,flv,pdf,txt,ppt,mp3,mp4',
+            'type' => 'required|in:image,audio,video,link,file',
         ];
         $validator = $this->makeValidation($request, $rules);
 
         if (!$validator->getData()->status) {
-            return $validator;
+            return response()->json([
+                'status' => false,
+                'message' => __('messages.error_msg'),
+                'errors' => $validator->getData()->message
+            ]);
         }
 
-        $media = new Media();
+        $media = new Media;
         $media->name = $this->upload($request, 'media');
         $media->type = $request->get('type');
         $media->save();
+
         return response()->json([
             'items' => $media,
+            'message' => __('messages.successfully_done'),
             'status' => true
         ]);
     }
@@ -520,7 +610,8 @@ class MessageController extends Controller
             $media = $media_collection->orderBy('created_at', 'DESC')->get();*/
 
             return response()->json([
-                'item' => $media,
+                'items' => $media,
+                'message' => __('messages.fetch_data_msg'),
                 'status' => true
             ]);
 /*        }
@@ -540,7 +631,11 @@ class MessageController extends Controller
         $validator = $this->makeValidation($request, $rules);
 
         if (!$validator->getData()->status) {
-            return $validator;
+            return response()->json([
+                'status' => false,
+                'message' => __('messages.error_msg'),
+                'errors' => $validator->getData()->message
+            ]);
         }
         if (isset($request->type) && ($request->type == 'user' || $request->type == 'message' || $request->type == 'group')) {
 
@@ -553,13 +648,14 @@ class MessageController extends Controller
 
             }
             return response()->json([
-                'item' => $search,
+                'items' => $search,
+                'message' => __('messages.fetch_data_msg'),
                 'status' => true
             ]);
         }
 
         return response()->json([
-            'message' => 'حدث خطأ ما حاول مرة اخرى',
+            'message' => __('messages.error_msg'),
             'status' => false
         ]);
     }
@@ -576,7 +672,8 @@ class MessageController extends Controller
         $messages_count = $messages_collection->count();
         $messages = $messages_collection->orderBy('pin', 'DESC')->orderBy('created_at', 'DESC')->get();
         return response()->json([
-            'item' => $messages,
+            'items' => $messages,
+            'message' => __('messages.fetch_data_msg'),
             'status' => true
         ]);
 
@@ -592,27 +689,33 @@ class MessageController extends Controller
         $validator = $this->makeValidation($request, $rules);
 
         if (!$validator->getData()->status) {
-            return $validator;
+            return response()->json([
+                'status' => false,
+                'message' => __('messages.error_msg'),
+                'errors' => $validator->getData()->message
+            ]);
         }
 
         $exist_message = Message::where('user_id', auth()->user()->id)
             ->where('id', '=', $request->get('message_id'))
             ->where('is_archived', 0)->first();
+
         if (!empty($exist_message)) {
 
             $message = Message::where('user_id', auth()->user()->id)
-            ->where('id', '=', $request->get('message_id'))
-            ->update([
-                'is_archived' => 1
-            ]);
+                ->where('id', '=', $request->get('message_id'))
+                ->update([
+                    'is_archived' => 1
+                ]);
             return response()->json([
-                'item' => $exist_message,
+                'items' => $exist_message,
+                'message' => __('messages.fetch_data_msg'),
                 'status' => true
             ]);
 
         }
         return response()->json([
-            'message' => 'حدث خطأ ما حاول مرة اخرى',
+            'message' => __('messages.error_msg'),
             'status' => false
         ]);
 
@@ -629,7 +732,8 @@ class MessageController extends Controller
         $messages_count = $messages_collection->count();
         $messages = $messages_collection->orderBy('pin', 'DESC')->orderBy('created_at', 'DESC')->get();
         return response()->json([
-            'item' => $messages,
+            'items' => $messages,
+            'message' => __('messages.fetch_data_msg'),
             'status' => true
         ]);
 
@@ -645,7 +749,11 @@ class MessageController extends Controller
         $validator = $this->makeValidation($request, $rules);
 
         if (!$validator->getData()->status) {
-            return $validator;
+            return response()->json([
+                'status' => false,
+                'message' => __('messages.error_msg'),
+                'errors' => $validator->getData()->message
+            ]);
         }
         $message = Message::where('user_id', auth()->user()->id)
             ->where('is_archived', '=', 0)->find($request->get('message_id'));
@@ -654,13 +762,14 @@ class MessageController extends Controller
             $message->is_draft = 1;
             $message->save();
             return response()->json([
-                'item' => $message,
+                'items' => $message,
+                'message' => __('messages.fetch_data_msg'),
                 'status' => true
             ]);
         }
         return response()->json([
             'status' => false,
-            'message' => 'هذه المجموعة غير متوفرة',
+            'message' => __('messages.error_msg')
         ]);
 
     }
@@ -675,7 +784,8 @@ class MessageController extends Controller
         $users = $users_seen_collection->orderBy('created_at', 'DESC')->get();
 
         return response()->json([
-            'item' => $users,
+            'items' => $users,
+            'message' => __('messages.fetch_data_msg'),
             'status' => true,
         ]);
 
@@ -689,7 +799,7 @@ class MessageController extends Controller
      * @return  response
      */
     public function storeInFireBase($message)
-    {
+    {   
         $serviceAccount = ServiceAccount::fromJsonFile(__DIR__.'/ammem-a0240-385b3d3ec166.json');
         $firebase = (new Factory)
             ->withServiceAccount($serviceAccount)
@@ -699,8 +809,7 @@ class MessageController extends Controller
         $database = $firebase->getDatabase();
         $newMsg = $database
             ->getReference('ammem/messages')
-            ->push([$message]);
-
+            ->push($message);
         return $newMsg->getvalue();    
     }
 
@@ -712,15 +821,11 @@ class MessageController extends Controller
      * @return  object
      */
     public function getFromFireBase($message_id = null)
-    {
-        $serviceAccount = ServiceAccount::fromJsonFile(__DIR__.'/ammem-a0240-385b3d3ec166.json');
-        $firebase = (new Factory)
-            ->withServiceAccount($serviceAccount)
-            ->withDatabaseUri('https://ammem-a0240.firebaseio.com/')
-            ->create();
-
-        $database = $firebase->getDatabase();
+    {   
+        $database = $this->firebase->getDatabase();
         $reference = $database->getReference('ammem/messages');
-        return $reference->getvalue();
+        $snapshot = $reference->getSnapshot();
+        $values = $snapshot->getValue();
+        return $values;
     }
 }

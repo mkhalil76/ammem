@@ -24,7 +24,7 @@ class ConstantController extends Controller
 
         return response()->json([
             'items' => $activities,
-            'message' => 'تم جلب البيانات بنجاح' ,
+            'message' => __('messages.fetch_data_msg'),
             'status' => true
         ]);
     }
@@ -40,7 +40,7 @@ class ConstantController extends Controller
         $organizations = Organization::orderBy('created_at', 'desc')->get();
         return response()->json([
             'items' => $organizations,
-            'message' => 'تم جلب البيانات بنجاح' ,
+            'message' => __('messages.fetch_data_msg'),
             'status' => true
         ]);
 
@@ -58,7 +58,7 @@ class ConstantController extends Controller
 
         return response()->json([
             'items' => $interests,
-            'message' => 'تم جلب البيانات بنجاح' ,
+            'message' => __('messages.fetch_data_msg'),
             'status' => true
         ]);
 
@@ -76,7 +76,7 @@ class ConstantController extends Controller
 
         return response()->json([
             'items' => $jobs,
-            'message' => 'تم جلب البيانات بنجاح' ,
+            'message' => __('messages.fetch_data_msg'),
             'status' => true
         ]);
     }
@@ -93,7 +93,7 @@ class ConstantController extends Controller
 
         return response()->json([
             'items' => $group_types,
-            'message' => 'تم جلب البيانات بنجاح' ,
+            'message' => __('messages.fetch_data_msg'),
             'status' => true
         ]);
 

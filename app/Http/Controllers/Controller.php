@@ -142,7 +142,7 @@ class Controller extends BaseController
             $tokens = DeviceToken::select('device_token', 'user_id')->get();
 
             if (count($tokens) > 0) {
-                $notification = new Notification();
+                $notification = new Notification;
                 $notification->sender_id = $sender_id;
                 $notification->action = $action;
                 $notification->action_id = $action_id;
@@ -151,7 +151,7 @@ class Controller extends BaseController
                 if ($notification->save()) {
 
                     foreach ($tokens as $token) {
-                        $receiver_notification = new NotificationReceiver();
+                        $receiver_notification = new NotificationReceiver;
                         $receiver_notification->notification_id = $notification->id;
                         $receiver_notification->receiver_id = $token->user_id;
                         $receiver_notification->save();
@@ -190,7 +190,7 @@ class Controller extends BaseController
 
 //    send notification
     public function FCM($title, $body, $data, $tokens)
-    {
+    {   
         $optionBuilder = new OptionsBuilder();
         $optionBuilder->setTimeToLive(60 * 20);
 

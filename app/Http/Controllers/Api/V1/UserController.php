@@ -25,6 +25,7 @@ use Auth;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\groupBackground;
 use URL;
+use Request as HttpRequest;
 
 class UserController extends Controller
 {
@@ -89,32 +90,43 @@ class UserController extends Controller
 
     // resend activation code
     public function resendActivationCode(Request $request)
-    {
+    {   
+        HttpRequest::merge(['mobile' => $this->formatMobileNumber($request->get('mobile'))]);
         $rules = [
             'mobile' => 'required',
         ];
         $validator = $this->makeValidation($request, $rules);
         if (!$validator->getData()->status) {
-            return $validator;
+            return response()->json([
+                'status' => false,
+                'message' => __('messages.error_msg'),
+                'errors' => $validator->getData()->message
+            ]);
         }
-
-        $user = User::where('mobile', $this->formatMobileNumber($request->get('mobile')))->first();
+        $user = User::where('mobile', $request->get('mobile'))->first();
+        if ($user->resend_number == 0) {
+            return response()->json([
+                'status' => false,
+                'message' => __('messages.excced_number_of_send_activation_code')
+            ]);
+        }
         if (isset($user)) {
             $activation_code = $this->generateActivationCode(6);
-            $resend = Mobily::send($this->formatMobileNumber($request->get('mobile'), 'Your activation code: ' . $activation_code);
+            $resend = Mobily::send($this->formatMobileNumber($request->get('mobile')), 'Your activation code: ' . $activation_code);
             if ($resend) {
                 $user->activation_code = $activation_code;
                 $user->password = bcrypt($activation_code);
+                $user->resend_number = $user->resend_number-1;
                 $user->save();
                 return response()->json([
                     'item' => $user,
-                    'message' => 'تم ارسال رمز التفعيل بنجاح' ,
+                    'message' => __('messages.resend_activiation_code') ,
                     'status' => true
                 ]);
             }
         }
         return response()->json([
-            'message' => 'حدث خطأما يرجى المحاولة مرة اخرى',
+            'message' => __('messages.error_msg'),
             'status' => false,
         ]);
     }
@@ -122,6 +134,7 @@ class UserController extends Controller
     // add new user and send activation code
     public function postUser(Request $request)
     {   
+        HttpRequest::merge(['mobile' => $this->formatMobileNumber($request->get('mobile'))]); 
         $rules = [
             'mobile' => 'required|unique:users,mobile',
             'email' => 'sometimes|unique:users',
@@ -131,7 +144,7 @@ class UserController extends Controller
         if (!$validator->getData()->status) {
             return response()->json([
                 'status' => false,
-                'message' => 'رقم الجوال موجود مسبقا ' ,
+                'message' => __('messages.error_msg'),
                 'errors' => $validator->getData()->message
             ]);
         }
@@ -146,7 +159,7 @@ class UserController extends Controller
             $user->country = "";
         }
         
-        $user->mobile = $mobile_number;
+        $user->mobile = $request->get('mobile');
         $user->email = $request->get('email');
         $user->activation_code = $activation_code;
         $user->password = bcrypt($activation_code);
@@ -155,12 +168,12 @@ class UserController extends Controller
             Mobily::send($mobile_number, 'Your activation code: ' . $activation_code);
             return response()->json([
                 'items' => $user,
-                'message' => 'تم انشاء مستخدم جديد بنجاح' ,
+                'message' => __('messages.create_new_user'),
                 'status' => true
             ]);
         }
         return response()->json([
-            'message' => 'حدث خطأ ما حاول مرة اخرى',
+            'message' => __('messages.error_msg'),
             'status' => false
         ]);
     }
@@ -231,30 +244,37 @@ class UserController extends Controller
             ]);
         }
         return response()->json([
-            'message' => 'حدث خطأ ما حاول مرة اخرى',
+            'message' => __('messages.error_msg'),
             'status' => false
         ]);
     }
 
     // activation by mobile
     public function confirmActivationCode(Request $request)
-    {
+    {   
+        HttpRequest::merge(['mobile' => $this->formatMobileNumber($request->get('mobile'))]);
         $rules = [
             'mobile' => 'required|exists:users,mobile',
             'activation_code' => 'required'
         ];
         $validator = $this->makeValidation($request, $rules);
         if (!$validator->getData()->status) {
-            return $validator;
+            return response()->json([
+                'status' => false,
+                'message' => __('messages.error_msg'),
+                'errors' => $validator->getData()->message
+            ]);
         }
         $mobile_number = $this->formatMobileNumber($request->get('mobile'));
-        $user = User::where('mobile', $mobile_number)->where('activation_code', $request->get('activation_code'))->first();
+
+        $user = User::where('mobile', $request->get('mobile'))->where('activation_code', $request->get('activation_code'))->first();
         if (!isset($user)) {
             return response()->json([
-                'message' => 'عذرا المستخدم غير متوفر',
+                'message' => __('messages.not_exist_user'). " ".__('messages.mobile_or_activation_not_exist'),
                 'status' => false
             ]);
         }
+        $user->name = $request->username;
         $user->is_confirm = 1;
         $user->save();
 
@@ -287,6 +307,7 @@ class UserController extends Controller
 
         return response()->json([
             'items' => $user,
+            'message' => __('messages.get_user_info_msg'),
             'status' => true
         ]);
 
@@ -299,7 +320,11 @@ class UserController extends Controller
         ];
         $validator = $this->makeValidation($request, $rules);
         if (!$validator->getData()->status) {
-            return $validator;
+            return response()->json([
+                'status' => false,
+                'message' => __('messages.error_msg'),
+                'errors' => $validator->getData()->message
+            ]);
         }
         $contacts = $request->get('contacts');
         $contacts = substr($contacts, 1, strlen($contacts) - 2);
@@ -314,6 +339,7 @@ class UserController extends Controller
         }
         return response()->json([
             'items' => $users,
+            'message' => __('messages.fetch_data_msg'),
             'status' => true
         ]);
     }
@@ -412,9 +438,10 @@ class UserController extends Controller
             'archived_msg' => $seen_messages,
             'activities' => $activities,
             'waiting_groups' => $waiting_groups,
-            'user_info' => $user_info,
+            'items' => $user_info,
             'groups_background' => $back_ground_array,
-            'status' => true
+            'status' => true,
+            'message' => __('messages.get_user_info_msg')
         ]);
     } 
 
@@ -426,24 +453,45 @@ class UserController extends Controller
      * @return  response
      */
     public function deleteMyAccount(Request $request)
-    {
-        $user_id = Auth::user()->id;
+    {   
+        $this->sendVirificationCode($request);
+        return response()->json([
+            'message' => __('messages.send_activiation_code'),
+            'status' => true,
+        ]);
+    }
 
+
+    /**
+     * function to confirm delete my account
+     * 
+     * @param  Request $request
+     * 
+     * @return  response
+     */
+    public function confirmDeleteMyAccount($activation_code)
+    {   
+        $user_info = User::where('activation_code', '=', $activation_code)->first();
+        if (empty($user_info)) {
+            return response()->json([
+                'status' => true,
+                'message' => __('messages.not_exist_user')
+            ]);
+        }
         try {
-            $user = User::findOrFail($user_id);
+            $user = User::findOrFail($user_info->id);
             $user->delete();
             return response()->json([
                 'status' => true,
-                'message' => 'تم حذف المستخدم بنجاح' 
+                'message' => __('messages.delete_account_msg')
             ]);
         } catch (ModelNotFoundException $e){
             return response()->json([
                 'status' => false,
-                'message' => 'هذا المستخدم غير موجود'
+                'message' => __('messages.error_msg')
             ]);
-        }    
-    }
-
+        }
+    } 
     /**
      * function to send varification code for the user
      * 
@@ -458,20 +506,28 @@ class UserController extends Controller
         try {
             $user = User::findOrFail($user_id);
             $activation_code = $this->generateActivationCode(6);
+            if ($user->resend_number == 0) {
+                return response()->json([
+                    'status' => false,
+                    'message' => __('messages.excced_number_of_send_activation_code')
+                ]);
+            }
             $resend = Mobily::send($user->mobile, 'Your activation code: ' . $activation_code);
             if ($resend) {
                 $user->activation_code = $activation_code;
                 $user->password = bcrypt($activation_code);
+                $user->resend_number = $user->resend_number-1;
                 $user->save();
                 return response()->json([
-                    'message' => 'تم ارسال رمز التفعيل بنجاح',
-                    'status' => true
+                    'message' => __('messages.send_activiation_code'),
+                    'status' => true,
+                    'items' => $user
                 ]);
             }
 
         } catch (ModelNotFoundException $e) {
             return response()->json([
-                'message' => 'هذا المستخدم غير موجود',
+                'message' => __('messages.not_exist_user'),
                 'status' => true
             ]);
         }
@@ -485,42 +541,63 @@ class UserController extends Controller
      * @return  response 
      */
     public function resetMobileNumber(Request $request)
-    {
+    {   
+        HttpRequest::merge(['new_mobile_number' => $this->formatMobileNumber($request->new_mobile_number)]);
         $rules = [
             'activation_code' => 'required',
-            'new_mobile_numbere' => 'required'
+            'new_mobile_number' => 'required'
         ];
 
         $validator = $this->makeValidation($request, $rules);
         if (!$validator->getData()->status) {
             return response()->json([
-                'message' => $validator,
-                'status' => false
+                'status' => false,
+                'message' => __('messages.error_msg'),
+                'errors' => $validator->getData()->message
             ]);
         }
 
-        $user_id = Auth::user()->id;
+
+        $user_info = User::where('activation_code', '=', $request->activation_code)->first();
+        if (empty($user_info)) {
+            return response()->json([
+                'status' => false,
+                'message' => __('messages.not_exist_user')
+            ]);
+        }
         try {
-            $user = User::findOrFail($user_id);
-            $mobile_number = $this->formatMobileNumber($request->new_mobile_numbere);
+            $user = User::findOrFail($user_info->id);
+            if ($user->mobile == $request->new_mobile_number) {
+                return response()->json([
+                    'status' => false,
+                    'message' => __('messages.user_exist_msg'),
+                ]);
+            }
+            $mobile_number = $this->formatMobileNumber($request->new_mobile_number);
             if ($user->activation_code == $request->activation_code) {
                 $user->mobile = $mobile_number;
                 $user->save();
-
+                // generate the access token 
+                
+                $tokenResult = $user->createToken('password');
+                $token = $tokenResult->token;                
                 return response()->json([
                     'status' => true,
-                    'message' => 'تم تحديث رقم الجوال بنجاح'
+                    'items' => $user,
+                    'access_token' => $tokenResult->accessToken,
+                    'token_type' => 'Bearer',
+                    'message' => __('messages.successfully_update_mobile_number')
                 ]);
             } else {
                 return response()->json([
                     'status' => false,
-                    'message' => 'رمز التفيل غير صحيح' ,
+                    'message' => __('messages.not_exist_user')
                 ]);
             }
         } catch (ModelNotFoundException $e) {
             return response()->json([
                 'status' => false,
-                'message' => 'هذا المستخدم غير موجود',
+                'message' => __('messages.error_msg')
             ]);
         }
     }
@@ -547,7 +624,8 @@ class UserController extends Controller
                 ->where('mobile', '=', $mobile_number)
                 ->get();
             return response()->json([
-                'users_list' => $user,
+                'items' => $user,
+                'message' => __('messages.fetch_data_msg'),
                 'status' => true
             ]);    
         } else {
@@ -571,6 +649,7 @@ class UserController extends Controller
             $user = $user->get();
             return response()->json([
                 'items' => $user,
+                'message' => __('messages.fetch_data_msg'),
                 'status' => true
             ]);  
         }
@@ -601,14 +680,14 @@ class UserController extends Controller
                 $update_user_group->status = "accept";
                 $update_user_group->save();
                 return response()->json([
-                    'ststus' => true,
+                    'status' => true,
                     'items' => $user_group,
-                    'message' => 'تم قبول طلب الانضمام الى المجموعة',
+                    'message' => __('messages.accept_join_group')
                 ]);
             } catch (ModelNotFoundException $e) {
                 return response()->json([
-                    'ststus' => false,
-                    'message' => $e,
+                    'status' => false,
+                    'message' => __('messages.error_msg'),
                 ]);
             }
 
@@ -619,20 +698,20 @@ class UserController extends Controller
                 $update_user_group->status = "reject";
                 $update_user_group->save();
                 return response()->json([
-                    'ststus' => true,
-                    'message' => 'تم رفض طلب الانضمام الى المجموعة',
+                    'status' => true,
+                    'message' => __('messages.reject_join_group')
                 ]);
             } catch (ModelNotFoundException $e) {
                 return response()->json([
                     'ststus' => false,
-                    'message' => $e,
+                    'message' => __('messages.error_msg'),
                 ]);
             }
         }
         } else {
             return response()->json([
                 'ststus' => false,
-                'message' => 'هذا المستخدم لم يتم ارسال له اي طلب للانضمام  لهذه المجموعة',
+                'message' => __('messages.request_not_exist')
             ]);
         }
     }

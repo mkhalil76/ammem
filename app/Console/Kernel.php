@@ -5,6 +5,7 @@ namespace App\Console;
 use App\Console\Commands\FinishDurationCommand;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use DB;
 
 class Kernel extends ConsoleKernel
 {
@@ -28,6 +29,12 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('finish:duration')
             ->cron('*/1 * * * * *');
+
+        $schedule->call(function () {
+            DB::table('users')->update([
+                'resend_number' => 3
+            ]);
+        })->monthlyOn(1);
     }
 
     /**

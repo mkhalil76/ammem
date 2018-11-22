@@ -25,7 +25,11 @@ class PaymentController extends Controller
         $validator = $this->makeValidation($request, $rules);
 
         if (!$validator->getData()->status) {
-            return $validator;
+            return response()->json([
+                'status' => false,
+                'message' => __('messages.error_msg'),
+                'errors' => $validator->getData()->message
+            ]);
         }
 
         $group = Group::where('user_id', auth()->user()->id)->find($request->get('group_id'));
@@ -43,14 +47,15 @@ class PaymentController extends Controller
             $bank_transfer_require->transfer_price = (double)$group_type->cost;
             $bank_transfer_require->save();
             return response()->json([
-                'item' => $bank_transfer_require,
-                'message' => 'تم اضافة بيانات الحساب بنجاح'
+                'items' => $bank_transfer_require,
+                'message' => __('messages.successfully_done'),
                 'status' => true
             ]);
 
         }
         return response()->json([
-            'status' => false
+            'status' => false,
+            'message' => __('messages.error_msg'),
         ]);
 
     }
@@ -65,7 +70,8 @@ class PaymentController extends Controller
         $requests = $requests_collection->orderBy('created_at', 'DESC')->get();
 
         return response()->json([
-            'item' => $requests,
+            'items' => $requests,
+            'message' => __('messages.fetch_data_msg'),
             'status' => true
         ]);
 

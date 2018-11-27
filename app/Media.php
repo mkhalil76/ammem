@@ -15,7 +15,6 @@ class Media extends Model
     {
 //        /home/wqfquran/public_html/3mmem.com/ammem/assets/upload/151325431214.png
         return url('/public/assets/upload/'.$value);
-
     }
     /*
         protected $appends = ['message'];

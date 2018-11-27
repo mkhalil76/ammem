@@ -46,8 +46,8 @@ class MessageController extends Controller
                 'pin' => 'required|in:0,1',
                 'is_reply' => 'required|in:0,1',
                 'type' => 'required|in:message,message_survey',
-                'group_id' => 'required', //|exists:groups,id
-                'member_id' => 'required', //|exists:users,id
+                //'group_id' => 'required', //|exists:groups,id
+                //'member_id' => 'required', //|exists:users,id
                 'media_id' => 'sometimes|exists:media,id',
                 'survey' => 'required_if:type,message_survey',
             ];
@@ -541,14 +541,15 @@ class MessageController extends Controller
                     $this->sendNotification(auth()->user()->id, $message->user_id, $reply->id, 'reply', null, 'رد جديدة');
                     $this->pusher->trigger('my-channel' . $group->slug, 'my-event', $data);
                     return response()->json([
-                        'item' => $reply,
-                        'status' => true
+                        'items' => $reply,
+                        'status' => true,
+                        'message' => __('messages.successfully_done')
                     ]);
                 }
             }
         }
         return response()->json([
-            'message' => __('messages.successfully_done'),
+            'message' => __('messages.error_msg'),
             'status' => false
         ]);
     }

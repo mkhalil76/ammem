@@ -123,7 +123,7 @@ class Controller extends BaseController
         $temp = time() . rand(5, 50);
         $ext = $request->file($input_name)->getClientOriginalExtension();
         $new_file_name = $temp . '.' . $ext;
-        $path = public_path().'/assets/upload';
+        $path = public_path().'/public/assets/upload';
         if (!File::exists($path)) {
             File::makeDirectory($path, $mode = 0777, true, true);
         }

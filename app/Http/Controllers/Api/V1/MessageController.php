@@ -46,8 +46,8 @@ class MessageController extends Controller
                 'pin' => 'required|in:0,1',
                 'is_reply' => 'required|in:0,1',
                 'type' => 'required|in:message,message_survey',
-                'group_id' => 'required', //|exists:groups,id
-                'member_id' => 'required', //|exists:users,id
+                //'group_id' => 'required', //|exists:groups,id
+                //'member_id' => 'required', //|exists:users,id
                 'media_id' => 'sometimes|exists:media,id',
                 'survey' => 'required_if:type,message_survey',
             ];

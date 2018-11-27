@@ -14,7 +14,7 @@ class Media extends Model
     public function getNameAttribute($value)
     {
 //        /home/wqfquran/public_html/3mmem.com/ammem/assets/upload/151325431214.png
-        return url('assets/upload/'.$value);
+        return url('public/assets/upload/'.$value);
 
     }
     /*

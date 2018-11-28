@@ -24,6 +24,6 @@ class groupBackground extends Model
 
     public function getImageAttribute($value)
     {
-        return url('assets/upload/' . $value);
+        return url('public/assets/upload/' . $value);
     }
 }

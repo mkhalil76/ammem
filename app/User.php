@@ -61,36 +61,84 @@ class User extends Authenticatable
         return $this->belongsToMany(Group::class, 'user_groups', 'user_id', 'group_id');
     }
 
-    public function getActivityAttribute()
-    {
-        return $this->Activity()->first();
+    public function getActivityAttribute($value)
+    {   
+        if ($value == null) {
+            return "";
+        }
+        $activity = $this->Activity()->first();
+        if ($activity != null) {
+            return $activity;
+        } else {
+            return "";
+        }
     }
 
-    public function getOrganizationAttribute()
-    {
-        return $this->Organization()->first();
+    public function getOrganizationAttribute($value)
+    {   
+        if ($value == null) {
+            return "";
+        }
+        $organization = $this->Organization()->first();
+        if ($organization != null) {
+            return $organization;
+        } else {
+            return "";
+        }
     }
 
-    public function getPhotoAttribute()
-    {
-        return $this->Photo()->first();
+    public function getPhotoAttribute($value)
+    {   
+        if ($value == null) {
+            return "";
+        }
+        $photo = $this->Photo()->first();
+        if ($photo != null) {
+            return $photo;
+        } else {
+            return "";
+        }
     }
 
-    public function getJobAttribute()
-    {
-        return $this->Job()->first();
+    public function getJobAttribute($value)
+    {   
+       if ($value == null) {
+            return "";
+        }
+        $job = $this->Job()->first();
+        if ($job != null) {
+            return $job;
+        } else {
+            return "";
+        }
     }
 
-    public function getInterestAttribute()
-    {
-        return $this->Interest()->first();
+    public function getInterestAttribute($value)
+    {   
+        if ($value == null) {
+            return "";
+        }
+        $interest = $this->Interest()->first();
+        if ($interest != null) {
+            return $interest;
+        } else {
+            return "";
+        }
     }
 
     public function findForPassport($identifier) {
         return $this->orWhere('email', $identifier)->orWhere('mobile', $identifier)->first();
     }
-    public function getGroupsAttribute()
-    {
-        return $this->Groups()->get();
+    public function getGroupsAttribute($value)
+    {   
+        if ($value == null) {
+            return "";
+        }
+        $groups = $this->Groups()->get();
+        if ($groups != null) {
+            return $groups;
+        } else {
+            return "";
+        }
     }
 }

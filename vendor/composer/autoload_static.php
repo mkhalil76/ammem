@@ -13,8 +13,8 @@ class ComposerStaticInit93367d8317a9e439d1569a33719b9f2a
         '023d27dca8066ef29e6739335ea73bad' => __DIR__ . '/..' . '/symfony/polyfill-php70/bootstrap.php',
         '667aeda72477189d0494fecd327c3641' => __DIR__ . '/..' . '/symfony/var-dumper/Resources/functions/dump.php',
         '1d1b89d124cc9cb8219922c9d5569199' => __DIR__ . '/..' . '/hamcrest/hamcrest-php/hamcrest/Hamcrest.php',
-        'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
         'a0edc8309cc5e1d60e3047b5df6b7052' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/functions_include.php',
+        'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
         '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
         '2c102faa651ef8ea5874edb585946bce' => __DIR__ . '/..' . '/swiftmailer/swiftmailer/lib/swift_required.php',
         'cf97c57bfe0f23854afd2f3818abb7a0' => __DIR__ . '/..' . '/zendframework/zend-diactoros/src/functions/create_uploaded_file.php',
@@ -135,6 +135,7 @@ class ComposerStaticInit93367d8317a9e439d1569a33719b9f2a
             'GuzzleHttp\\Promise\\' => 19,
             'GuzzleHttp\\' => 11,
             'Google\\Auth\\' => 12,
+            'Geckob\\Firebase\\' => 16,
         ),
         'F' => 
         array (
@@ -360,6 +361,10 @@ class ComposerStaticInit93367d8317a9e439d1569a33719b9f2a
         'Google\\Auth\\' => 
         array (
             0 => __DIR__ . '/..' . '/google/auth/src',
+        ),
+        'Geckob\\Firebase\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/geckob/firebase/src',
         ),
         'Firebase\\JWT\\' => 
         array (
@@ -1108,6 +1113,15 @@ class ComposerStaticInit93367d8317a9e439d1569a33719b9f2a
         'Firebase\\JWT\\ExpiredException' => __DIR__ . '/..' . '/firebase/php-jwt/src/ExpiredException.php',
         'Firebase\\JWT\\JWT' => __DIR__ . '/..' . '/firebase/php-jwt/src/JWT.php',
         'Firebase\\JWT\\SignatureInvalidException' => __DIR__ . '/..' . '/firebase/php-jwt/src/SignatureInvalidException.php',
+        'Geckob\\Firebase\\Firebase' => __DIR__ . '/..' . '/geckob/firebase/src/Firebase.php',
+        'Geckob\\Firebase\\GoogleConsole' => __DIR__ . '/..' . '/geckob/firebase/src/GoogleConsole.php',
+        'Geckob\\Firebase\\HttpHandler\\FirebaseInterface' => __DIR__ . '/..' . '/geckob/firebase/src/HttpHandler/FirebaseInterface.php',
+        'Geckob\\Firebase\\HttpHandler\\Guzzle5HttpHandler' => __DIR__ . '/..' . '/geckob/firebase/src/HttpHandler/Guzzle5HttpHandler.php',
+        'Geckob\\Firebase\\HttpHandler\\Guzzle6HttpHandler' => __DIR__ . '/..' . '/geckob/firebase/src/HttpHandler/Guzzle6HttpHandler.php',
+        'Geckob\\Firebase\\HttpHandler\\HttpHandlerFactory' => __DIR__ . '/..' . '/geckob/firebase/src/HttpHandler/HttpHandlerFactory.php',
+        'Geckob\\Firebase\\Middleware\\EnsureJson' => __DIR__ . '/..' . '/geckob/firebase/src/Middleware/EnsureJson.php',
+        'Geckob\\Firebase\\Provider\\FirebaseServiceProvider' => __DIR__ . '/..' . '/geckob/firebase/src/Provider/FirebaseServiceProvider.php',
+        'Geckob\\Firebase\\Subscribers\\EnsureJson' => __DIR__ . '/..' . '/geckob/firebase/src/Subscribers/EnsureJson.php',
         'Google\\Auth\\ApplicationDefaultCredentials' => __DIR__ . '/..' . '/google/auth/src/ApplicationDefaultCredentials.php',
         'Google\\Auth\\CacheTrait' => __DIR__ . '/..' . '/google/auth/src/CacheTrait.php',
         'Google\\Auth\\Cache\\InvalidArgumentException' => __DIR__ . '/..' . '/google/auth/src/Cache/InvalidArgumentException.php',

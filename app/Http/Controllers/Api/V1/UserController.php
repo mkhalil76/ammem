@@ -729,5 +729,23 @@ class UserController extends Controller
             $mobile_number = str_replace($mobile_number[0], "00", $mobile_number);
         }
         return $mobile_number;
-    } 
+    }
+
+    /**
+     * function to remove null's from collection value 
+     * 
+     * @param  object
+     * 
+     * @return  object
+     */ 
+    private function array_remove_null($item)
+    {
+        $attr = $item['fillable'];
+        foreach ($attr as $key => $value) {
+            if (is_null($item[$value])) {
+                $item[$value] = "";
+            }
+        }
+        return $item;
+    }
 }

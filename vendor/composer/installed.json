@@ -526,6 +526,54 @@
         ]
     },
     {
+        "name": "geckob/firebase",
+        "version": "v1.0.1",
+        "version_normalized": "1.0.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/luqmanrom/firebase-php.git",
+            "reference": "e087ae8085b03fd77d0c34c9b178839b5cc3c009"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/luqmanrom/firebase-php/zipball/e087ae8085b03fd77d0c34c9b178839b5cc3c009",
+            "reference": "e087ae8085b03fd77d0c34c9b178839b5cc3c009",
+            "shasum": ""
+        },
+        "require": {
+            "google/auth": "~1.01",
+            "guzzlehttp/guzzle": "~5.3|~6.0",
+            "guzzlehttp/psr7": "~1.2",
+            "illuminate/support": "^5.2.8",
+            "php": ">=5.3.0"
+        },
+        "time": "2018-01-30T07:19:38+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Geckob\\Firebase\\": "src"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Luqman",
+                "email": "luqmanrom@gmail.com"
+            }
+        ],
+        "description": "PHP package for Firebase wrapper",
+        "keywords": [
+            "firebase",
+            "firebase laravel",
+            "firebase php",
+            "google"
+        ]
+    },
+    {
         "name": "google/auth",
         "version": "v1.4.0",
         "version_normalized": "1.4.0.0",

@@ -39,22 +39,23 @@ class MessageController extends Controller
     //add new message that you want to share in group/s
     public function postMessage(Request $request)
     {
-        if (!$request->has('draft'))
+        if (!$request->has('draft')){
             $rules = [
                 'title' => 'required',
                 'text' => 'required',
                 'pin' => 'required|in:0,1',
                 'is_reply' => 'required|in:0,1',
                 'type' => 'required|in:message,message_survey',
-                //'group_id' => 'required', //|exists:groups,id
-                //'member_id' => 'required', //|exists:users,id
+                'group_id' => 'sometimes', //|exists:groups,id
+                'member_id' => 'sometimes', //|exists:users,id
                 'media_id' => 'sometimes|exists:media,id',
                 'survey' => 'required_if:type,message_survey',
             ];
-        else
+        } else {
             $rules = [
                 'draft' => 'required|in:0,1'
             ];
+        }    
         $validator = $this->makeValidation($request, $rules);
 
         if (!$validator->getData()->status) {
@@ -217,7 +218,7 @@ class MessageController extends Controller
             }
         }
         return response()->json([
-            'status' => true,
+            'status' => false,
             'message' => __('messages.error_msg')
         ]);
     }
@@ -226,7 +227,6 @@ class MessageController extends Controller
     //add new message that you want to share in group/s
     public function putMessage(Request $request)
     {
-
         if (!$request->has('draft'))
             $rules = [
                 'title' => 'sometimes',
@@ -683,7 +683,6 @@ class MessageController extends Controller
     // move message to archive
     public function postArchive(Request $request)
     {
-
         $rules = [
             'message_id' => 'required|exists:messages,id',
         ];
@@ -696,7 +695,6 @@ class MessageController extends Controller
                 'errors' => $validator->getData()->message
             ]);
         }
-
         $exist_message = Message::where('user_id', auth()->user()->id)
             ->where('id', '=', $request->get('message_id'))
             ->where('is_archived', 0)->first();
@@ -809,8 +807,9 @@ class MessageController extends Controller
 
         $database = $firebase->getDatabase();
         $newMsg = $database
-            ->getReference('ammem/messages')
-            ->push($message);
+            ->getReference('ammem/'.$message->id)
+            ->set($message);
+
         return $newMsg->getvalue();    
     }
 
@@ -824,9 +823,36 @@ class MessageController extends Controller
     public function getFromFireBase($message_id = null)
     {   
         $database = $this->firebase->getDatabase();
-        $reference = $database->getReference('ammem/messages');
+        $reference = $database->getReference('ammem');
         $snapshot = $reference->getSnapshot();
         $values = $snapshot->getValue();
-        return $values;
+        $array = [];
+        foreach ($values as $value) {
+            $array[] = $value;
+        }
+        return $array;
     }
+
+    /**
+     * function to update from firebase
+     * 
+     * @param $message
+     * 
+     * @return  object
+     */
+    public function updateFromFireBase($message)
+    {
+        $serviceAccount = ServiceAccount::fromJsonFile(__DIR__.'/ammem-a0240-385b3d3ec166.json');
+        $firebase = (new Factory)
+            ->withServiceAccount($serviceAccount)
+            ->withDatabaseUri('https://ammem-a0240.firebaseio.com/')
+            ->create();
+
+        $database = $firebase->getDatabase();
+        $newMsg = $database
+            ->getReference('ammem/'.$message->id)
+            ->set($message);
+
+        return $newMsg->getvalue();   
+    } 
 }

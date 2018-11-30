@@ -807,7 +807,7 @@ class MessageController extends Controller
 
         $database = $firebase->getDatabase();
         $newMsg = $database
-            ->getReference('ammem/'.$message->id)
+            ->getReference('users/'.$message->user_id.'/'.$message->id)
             ->set($message);
 
         return $newMsg->getvalue();    
@@ -823,7 +823,7 @@ class MessageController extends Controller
     public function getFromFireBase($message_id = null)
     {   
         $database = $this->firebase->getDatabase();
-        $reference = $database->getReference('ammem');
+        $reference = $database->getReference('users');
         $snapshot = $reference->getSnapshot();
         $values = $snapshot->getValue();
         $array = [];
@@ -850,7 +850,7 @@ class MessageController extends Controller
 
         $database = $firebase->getDatabase();
         $newMsg = $database
-            ->getReference('ammem/'.$message->id)
+            ->getReference('users/'.$message->user_id.'/'.$message->id)
             ->set($message);
 
         return $newMsg->getvalue();   

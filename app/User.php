@@ -129,6 +129,7 @@ class User extends Authenticatable
     public function findForPassport($identifier) {
         return $this->orWhere('email', $identifier)->orWhere('mobile', $identifier)->first();
     }
+    
     public function getGroupsAttribute($value)
     {   
         if ($value == null) {

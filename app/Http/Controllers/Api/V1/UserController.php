@@ -26,9 +26,26 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\groupBackground;
 use URL;
 use Request as HttpRequest;
+use Kreait\Firebase;
+use Kreait\Firebase\Factory;
+use Kreait\Firebase\ServiceAccount;
+use Kreait\Firebase\Database;
 
 class UserController extends Controller
-{
+{   
+    private $serviceAccount;
+
+    private $firebase;
+
+    function __construct()
+    {
+        $this->serviceAccount = ServiceAccount::fromJsonFile(__DIR__.'/ammem-a0240-385b3d3ec166.json');
+        $this->firebase = (new Factory)
+            ->withServiceAccount($this->serviceAccount)
+            ->withDatabaseUri('https://ammem-a0240.firebaseio.com/')
+            ->create();
+    }
+
     // generate refresh token
     protected function refresh_token(Request $request)
     {
@@ -165,6 +182,7 @@ class UserController extends Controller
         $user->password = bcrypt($activation_code);
 
         if ($user->save()) {
+            $this->storeInFireBase($user);
             Mobily::send($mobile_number, 'Your activation code: ' . $activation_code);
             return response()->json([
                 'items' => $user,
@@ -747,5 +765,26 @@ class UserController extends Controller
             }
         }
         return $item;
+    }
+
+    /**
+     * function to push data to realtime database
+     * 
+     * @param object $message
+     * 
+     * @return  response
+     */
+    public function storeInFireBase($user)
+    {   
+        $serviceAccount = ServiceAccount::fromJsonFile(__DIR__.'/ammem-a0240-385b3d3ec166.json');
+        $firebase = (new Factory)
+            ->withServiceAccount($serviceAccount)
+            ->withDatabaseUri('https://ammem-a0240.firebaseio.com/')
+            ->create();
+
+        $database = $firebase->getDatabase();
+        $newMsg = $database
+            ->getReference('users/'.$user->mobile)
+            ->set($user->mobile);
     }
 }

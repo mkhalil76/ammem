@@ -36,7 +36,7 @@ class GroupController extends Controller
                 'errors' => $validator->getData()->message
             ]);
         }
-        $password = $this->generateActivationCode(5);
+        $password = $this->generateActivationCode(6);
         $group = new Group();
 
         $group->name = $request->get('name');
@@ -45,7 +45,7 @@ class GroupController extends Controller
         $group->type_id = $request->get('type_id');
         $group->status = $request->get('status');
         $group->user_id = auth()->user()->id;
-        //$group->password = Hash::make($password);
+        $group->password = $password;
 
         if ($group->type_id == 3) {
             $group->admin_status = 'accept';
@@ -80,15 +80,15 @@ class GroupController extends Controller
 
                         if (!isset($user_group))
                             $user_group = new UserGroup();
-                        $user_group->user_id = (int)$member_id;
-                        $user_group->group_id = $group->id;
+                            $user_group->user_id = (int)$member_id;
+                            $user_group->group_id = $group->id;
 
                         if ($request->has('is_notification'))
                             $user_group->is_notification = $request->get('is_notification');
                         $user_group->save();
 
                         $this->sendNotification(auth()->user()->id, (int)$member_id, $group->id, 'group', null, __('messages.new_group'));
-
+                        $resend = Mobily::send($user->mobile, 'Your group\'s (' . $request->get('name') . ') password: ' . $password);
                 } catch (ModelNotFoundException $e) {
                     return response()->json([
                         'status' => false,
@@ -325,5 +325,39 @@ class GroupController extends Controller
             'status' => true,
             'items' => URL::to('/assets/upload/'.$background->background)
         ]);
+    }
+
+    /**
+     * function to login to the group
+     * 
+     * @param Request $request
+     * 
+     * @return  response
+     */
+    public function loginToGroup(Request $request)
+    {
+        $group_id = $request->group_id;
+        $password = $request->password;
+
+        $group = Group::where('id', '=', $group_id)->first();
+        if (!empty($group)) {
+            if ($group->password == $password) {
+                return response()->json([
+                    'status' => true,
+                    'items' => $group,
+                    'message' => __('messages.login_to_group')
+                ]);
+            } else {
+                return response()->json([
+                    'message' => __('messages.error_msg'),
+                    'status' => false
+                ]);
+            }
+        } else {
+            return response()->json([
+                'message' => __('messages.error_msg'),
+                'status' => false
+            ]);
+        }
     } 
 }

@@ -30,8 +30,8 @@
                         <div class="LiftContent">
                            <div class="formContent">
                               <form class=""  method="post">
-                                 <input class="InputNumber" type="text" name="" value="" required  placeholder="أدخل رقم الهاتف ">
-                                 <button class="Nsubmit" type="submit" name="button">تسجيل دخول</button>
+                                 <input class="InputNumber" id="login-mobile" type="text" name="" value="" required  placeholder="أدخل رقم الهاتف ">
+                                 <button class="Nsubmit" type="button" id="user-login" name="button">تسجيل دخول</button>
                               </form>
                               <br/>
                               <div class="NewUser">
@@ -163,7 +163,6 @@
       <script src="{{url('/')}}/assets/web-style/js/clipboard.min.js"></script>
       <script src="{{url('/')}}/assets/web-style/js/main.js"></script>
       <script src="{{url('/')}}/assets/web-style/js/login.js"></script>
-      <script src="{{url('/')}}/assets/web-style/js/auth/NewAccount.js"></script>
       <script src="{{ url('/')}}/assets/web-style/node_modules/intl-tel-input/build/js/intlTelInput.js"></script>
       <script>
          var input = document.querySelector("#mobile");

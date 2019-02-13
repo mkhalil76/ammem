@@ -16,6 +16,7 @@ use LaravelFCM\Message\PayloadDataBuilder;
 use LaravelFCM\Message\PayloadNotificationBuilder;
 use Pusher\Pusher;
 use Validator;
+use Vzool\Malath\Malath_SMS;
 
 class Controller extends BaseController
 {
@@ -24,6 +25,8 @@ class Controller extends BaseController
 
     public $pusher;
     private $_apiContext;
+    public $mobile;
+
     public function __construct()
     {
 
@@ -39,6 +42,7 @@ class Controller extends BaseController
             $options
         );
 
+        $this->mobile = new Malath_SMS("napil111", "admin0555767323", 'UTF-8');
 
 //        $this->_apiContext = PayPal::ApiContext(
 //            config('services.paypal.client_id'),
@@ -230,22 +234,4 @@ class Controller extends BaseController
         return $object;
 //        return response_api($downstreamResponse->numberSuccess() > 0, $object);
     }
-
-    //send sms messages
-    public function sendSMS($message, $numbers)
-    {
-
-        $url = 'http://www.mursalat-sms.com/api/sendsms.php?username=dalah&password=050961&message=' . $message . '&numbers=' . $numbers . '&sender=muhannadapp&unicode=e&Rmduplicated=1&return=json';
-
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($curl, CURLOPT_HEADER, false);
-        $data = curl_exec($curl);
-        $data = json_decode($data, true);
-        return $data['Code'];
-    }
-
-
 }

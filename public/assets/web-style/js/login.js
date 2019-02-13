@@ -45,4 +45,30 @@ $(document).ready(function () {
             }
         });
     });
+
+    $('#user-login').click(function () {
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            url: '/user/login',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: {
+                mobile:$('#login-mobile').val()
+            }
+        }).done(function(msg) {
+            if (msg.status == false) {
+                var errors = msg.errors.original.message;
+                console.log(errors);
+                $("#edit_info").click();
+                $.each(errors,function(key,val){
+                    if(val.fieldname == "mobile") {
+                        $('#mobile-error').text(val.message);
+                    }
+                    console.log(key+" "+val.message);
+                });
+            }
+        });
+    });
 });

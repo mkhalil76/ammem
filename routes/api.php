@@ -35,6 +35,7 @@ Route::group(['prefix' => version_api(), 'namespace' => namespace_api(), 'as' =>
     Route::get('jobs', 'ConstantController@getJobs');
     
     Route::group(['middleware' => 'auth:api'], function () {
+        Route::post('login-to-group', 'GroupController@loginToGroup');
         Route::put('user', 'UserController@putUser');
         Route::get('user/{user_id?}', 'UserController@getUser');
         Route::post('contacts','UserController@checkContacts');

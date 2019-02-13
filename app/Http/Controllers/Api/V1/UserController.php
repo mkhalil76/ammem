@@ -151,7 +151,7 @@ class UserController extends Controller
     // add new user and send activation code
     public function postUser(Request $request)
     {   
-        HttpRequest::merge(['mobile' => $this->formatMobileNumber($request->get('mobile'))]); 
+        HttpRequest::merge(['mobile' => $this->formatMobileNumber($request->get('mobile'))]);
         $rules = [
             'mobile' => 'required|unique:users,mobile',
             'email' => 'sometimes|unique:users',
@@ -169,6 +169,7 @@ class UserController extends Controller
 
         $activation_code = $this->generateActivationCode(6);
         Mobily::send($mobile_number, 'Your activation code: ' . $activation_code);
+        //$this->send($mobile_number, 'Your activation code: ' . $activation_code);
         $user = new User();
         if (!empty($request->get('country'))) {
             $user->country = $request->get('country');
@@ -184,6 +185,7 @@ class UserController extends Controller
         if ($user->save()) {
             $this->storeInFireBase($user);
             Mobily::send($mobile_number, 'Your activation code: ' . $activation_code);
+            //$this->send($mobile_number, 'Your activation code: ' . $activation_code);
             return response()->json([
                 'items' => $user,
                 'message' => __('messages.create_new_user'),

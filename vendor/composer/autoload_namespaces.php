@@ -12,6 +12,4 @@ return array(
     'Mpociot\\Firebase' => array($vendorDir . '/mpociot/laravel-firebase-sync/src'),
     'Mockery' => array($vendorDir . '/mockery/mockery/library'),
     'Laravelrus\\LocalizedCarbon\\' => array($vendorDir . '/laravelrus/localized-carbon/src'),
-    'JakubOnderka\\PhpConsoleHighlighter' => array($vendorDir . '/jakub-onderka/php-console-highlighter/src'),
-    'JakubOnderka\\PhpConsoleColor' => array($vendorDir . '/jakub-onderka/php-console-color/src'),
 );

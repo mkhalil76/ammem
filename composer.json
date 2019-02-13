@@ -20,6 +20,7 @@
         "phpoffice/phpexcel": "^1.8",
         "pusher/pusher-php-server": "^3.0",
         "symfony/css-selector": "4.0.3",
+        "vzool/malath_sms": "^0.04.0",
         "yajra/laravel-datatables-oracle": "8.3.3"
     },
     "require-dev": {

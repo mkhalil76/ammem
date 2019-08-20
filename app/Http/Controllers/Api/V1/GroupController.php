@@ -211,8 +211,8 @@ class GroupController extends Controller
         }
         $user_groups = UserGroup::where('user_id', auth()->user()->id)->where('status', 'accept')->pluck('group_id')->toArray();
         $groups_id = array_unique($user_groups);
-        $groups_id = Group::where('admin_status', 'accept')->whereIn('id', $groups_id)->pluck('id')->toArray();
-
+        //$groups_id = Group::where('admin_status', 'accept')->whereIn('id', $groups_id)->pluck('id')->toArray();
+        $groups_id = Group::whereIn('id', $groups_id)->pluck('id')->toArray();
 
         $groups_collection = Group::whereIn('id', $groups_id);
         $groups_count = $groups_collection->count();

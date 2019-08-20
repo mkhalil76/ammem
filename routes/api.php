@@ -33,7 +33,7 @@ Route::group(['prefix' => version_api(), 'namespace' => namespace_api(), 'as' =>
     Route::get('organizations', 'ConstantController@getOrganizations');
     Route::get('interests', 'ConstantController@getInterests');
     Route::get('jobs', 'ConstantController@getJobs');
-    
+    Route::post('send-activation-code', 'UserController@sendActivationCode');
     Route::group(['middleware' => 'auth:api'], function () {
         Route::post('login-to-group', 'GroupController@loginToGroup');
         Route::put('user', 'UserController@putUser');

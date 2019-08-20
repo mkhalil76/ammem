@@ -53,7 +53,7 @@ class User extends Authenticatable
 
     public function Job()
     {
-        return $this->belongsTo(Job::class, 'job_id');
+        return $this->belongsTo(Job::class);
     }
 
     public function Groups()
@@ -64,65 +64,65 @@ class User extends Authenticatable
     public function getActivityAttribute($value)
     {   
         if ($value == null) {
-            return "";
+            return null;
         }
         $activity = $this->Activity()->first();
         if ($activity != null) {
             return $activity;
         } else {
-            return "";
+            return null;
         }
     }
 
     public function getOrganizationAttribute($value)
     {   
         if ($value == null) {
-            return "";
+            return null;
         }
         $organization = $this->Organization()->first();
         if ($organization != null) {
             return $organization;
         } else {
-            return "";
+            return null;
         }
     }
 
     public function getPhotoAttribute($value)
     {   
         if ($value == null) {
-            return "";
+            return null;
         }
         $photo = $this->Photo()->first();
         if ($photo != null) {
             return $photo;
         } else {
-            return "";
+            return null;
         }
     }
 
     public function getJobAttribute($value)
     {   
        if ($value == null) {
-            return "";
+            return null;
         }
         $job = $this->Job()->first();
         if ($job != null) {
             return $job;
         } else {
-            return "";
+            return null;
         }
     }
 
     public function getInterestAttribute($value)
     {   
         if ($value == null) {
-            return "";
+            return null;
         }
         $interest = $this->Interest()->first();
         if ($interest != null) {
             return $interest;
         } else {
-            return "";
+            return null;
         }
     }
 
@@ -133,13 +133,13 @@ class User extends Authenticatable
     public function getGroupsAttribute($value)
     {   
         if ($value == null) {
-            return "";
+            return null;
         }
         $groups = $this->Groups()->get();
         if ($groups != null) {
             return $groups;
         } else {
-            return "";
+            return null;
         }
     }
 }

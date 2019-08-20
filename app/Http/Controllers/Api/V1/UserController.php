@@ -214,8 +214,9 @@ class UserController extends Controller
             'job_id' => 'required|exists:jobs,id',
             'bod' => 'required',
             'city' => 'required',
-            'email' => 'required'
+            'email' => 'required|unique:users,email'
         ];
+
         if ($request->has('mobile')) {
             $rules['old_activation_code'] = 'required';
         }
@@ -376,8 +377,10 @@ class UserController extends Controller
         $user_id = auth()->user()->id;
 
         $user_groups = UserGroup::where('user_id', $user_id)->where('status', 'accept')->pluck('group_id')->toArray();
+
         $groups_id = array_unique($user_groups);
-        $groups_id = Group::where('admin_status', 'accept')->whereIn('id', $groups_id)->pluck('id')->toArray();
+        $groups_id = Group::whereIn('id', $groups_id)->pluck('id')->toArray();
+
         $groups_background = groupBackground::whereIn('group_id', $groups_id)->pluck('group_id', 'background');
 
         $groups_collection = Group::whereIn('id', $groups_id);
@@ -789,4 +792,39 @@ class UserController extends Controller
             ->getReference('users/'.$user->mobile)
             ->set($user->mobile);
     }
+
+    /**
+     * function to send activation code for the user
+     * 
+     * @param Request $request
+     * 
+     * @return  response
+     */
+    public function sendActivationCode(Request $request)
+    {
+      HttpRequest::merge(['mobile' => $this->formatMobileNumber($request->mobile)]);
+      $exist_mobile = User::where('mobile', '=', $request->mobile)->first();
+      if (empty($exist_mobile)) {
+          return response()->json([
+              'status' => false,
+              'message' => __('messages.not_exist_user')
+          ]);
+      } else {
+          $exist_mobile = User::where('mobile', '=', $request->mobile)->first();
+          $activation_code = $this->generateActivationCode(6);
+          $resend = Mobily::send($this->formatMobileNumber($request->mobile), 'Your activation code: ' . $activation_code);
+          if ($resend) {
+              $user = User::where('mobile', '=', $request->mobile)->update([
+                'activation_code' => $activation_code,
+                'password' => bcrypt($activation_code),
+                'resend_number' => $exist_mobile->resend_number-1
+              ]);
+              return response()->json([
+                  'message' => __('messages.resend_activiation_code'),
+                  'activation_code' => $activation_code,
+                  'status' => true
+              ]);
+          }
+    }
+  } 
 }

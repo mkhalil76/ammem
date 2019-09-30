@@ -73,7 +73,18 @@ class User extends Authenticatable
             return null;
         }
     }
-
+    /**
+     * function to get profile picture full path
+     * 
+     * @param String $image_name
+     * 
+     * @return String full_path
+     * 
+     */
+    public function getProfilePicAttribute($image_name)
+    {
+        return public_path('/images/'.$image_name);
+    }
     public function getOrganizationAttribute($value)
     {   
         if ($value == null) {

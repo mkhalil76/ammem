@@ -214,7 +214,8 @@ class UserController extends Controller
             'job_id' => 'required|exists:jobs,id',
             'bod' => 'required',
             'city' => 'required',
-            'email' => 'required|unique:users,email'
+            'email' => 'required|unique:users,email',
+            'profile_pic' => 'required|image|mimes:jpeg,png,jpg,gif,svg'
         ];
 
         if ($request->has('mobile')) {
@@ -226,6 +227,9 @@ class UserController extends Controller
             return $validator;
         }
 
+        if ($request->has('profile_pic')) {
+            $imageName = $this->upload($request, 'profile_pic');
+        }   
 
         auth()->user()->name = $request->get('name');
         auth()->user()->region = $request->get('region');
@@ -244,6 +248,7 @@ class UserController extends Controller
         auth()->user()->gender = $request->get('gender');
         auth()->user()->job_id = $request->get('job_id');
         auth()->user()->email = $request->get('email');
+        auth()->user()->profile_pic = $imageName;
         if ($request->has('mobile') && auth()->user()->activation_code == $request->get('old_activation_code')){
             $mobile_number = $this->formatMobileNumber($request->get('mobile'));
             $activation_code = $this->generateActivationCode(6);

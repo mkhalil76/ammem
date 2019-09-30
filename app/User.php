@@ -82,8 +82,9 @@ class User extends Authenticatable
      * 
      */
     public function getProfilePicAttribute($image_name)
-    {
-        return public_path('/images/'.$image_name);
+    {   
+        return asset('/public/assets/upload/'.$image_name);
+        //return public_path('/images/'.$image_name);
     }
     public function getOrganizationAttribute($value)
     {   

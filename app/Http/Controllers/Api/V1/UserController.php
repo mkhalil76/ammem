@@ -206,7 +206,7 @@ class UserController extends Controller
             'name' => 'required',
             'region' => 'required',
             'activity_name' => 'sometimes',
-            'mobile' => 'sometimes|unique:users,mobile',
+            'mobile' => 'sometimes|unique:users,mobile,'.auth()->user()->id,
             'organisation_name' => 'sometimes',
             'activity_id' => 'sometimes|exists:activities,id',
             'organization_id' => 'required|exists:organizations,id',
@@ -215,7 +215,7 @@ class UserController extends Controller
             'job_id' => 'required|exists:jobs,id',
             'bod' => 'required',
             'city' => 'required',
-            'email' => 'required|unique:users,email',
+            'email' => 'required|unique:users,email,'.auth()->user()->id,
             'profile_pic' => 'required|image|mimes:jpeg,png,jpg,gif,svg'
         ];
 

@@ -219,7 +219,7 @@ class UserController extends Controller
             'profile_pic' => 'required|image|mimes:jpeg,png,jpg,gif,svg'
         ];
 
-        if ($request->has('mobile')) {
+        if (!empty($request->mobile)) {
             $rules['old_activation_code'] = 'required';
         }
 
@@ -228,7 +228,7 @@ class UserController extends Controller
             return $validator;
         }
 
-        if ($request->has('profile_pic')) {
+        if (!empty($request->profile_pic)) {
             $imageName = $this->upload($request, 'profile_pic');
         }  
 

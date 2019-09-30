@@ -200,7 +200,8 @@ class UserController extends Controller
 
     // complete user profile
     public function putUser(Request $request)
-    {
+    {   
+        $imageName = "";
         $rules = [
             'name' => 'required',
             'region' => 'required',
@@ -229,7 +230,7 @@ class UserController extends Controller
 
         if ($request->has('profile_pic')) {
             $imageName = $this->upload($request, 'profile_pic');
-        }   
+        }  
 
         auth()->user()->name = $request->get('name');
         auth()->user()->region = $request->get('region');

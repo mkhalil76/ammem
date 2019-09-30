@@ -24,7 +24,7 @@
 //https://p3plcpnl0822.prod.phx3.secureserver.net
 
 Route::group(['prefix' => version_api(), 'namespace' => namespace_api(), 'as' => 'api.'], function () {
-
+	Route::post('reset-user', 'UserController@Reset');
     Route::post('login', 'UserController@access_token');
     Route::post('user', 'UserController@postUser');
     Route::post('confirm_activation', 'UserController@confirmActivationCode');

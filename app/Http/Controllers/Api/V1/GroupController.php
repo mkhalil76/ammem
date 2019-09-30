@@ -210,6 +210,7 @@ class GroupController extends Controller
             $paginate_num = intval($_GET['page']);
         }
         $user_groups = UserGroup::where('user_id', auth()->user()->id)->where('status', 'accept')->pluck('group_id')->toArray();
+
         $groups_id = array_unique($user_groups);
         //$groups_id = Group::where('admin_status', 'accept')->whereIn('id', $groups_id)->pluck('id')->toArray();
         $groups_id = Group::whereIn('id', $groups_id)->pluck('id')->toArray();
@@ -217,6 +218,7 @@ class GroupController extends Controller
         $groups_collection = Group::whereIn('id', $groups_id);
         $groups_count = $groups_collection->count();
         $groups = $groups_collection->orderBy('created_at', 'DESC')->get();
+        
         return response()->json([
             'items' => $groups,
             'message' => __('messages.fetch_data_msg'),
@@ -230,7 +232,7 @@ class GroupController extends Controller
         $user_groups = UserGroup::where('user_id', auth()->user()->id)->where('status', 'accept')->where('group_id', $group_id)->first();
 
         if (isset($user_groups)) {
-            $group = Group::where('admin_status', 'accept')->find($group_id);
+            $group = Group::find($group_id);
             return response()->json([
                 'items' => $group,
                 'message' => __('messages.fetch_data_msg'),

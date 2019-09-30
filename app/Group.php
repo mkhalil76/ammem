@@ -37,7 +37,7 @@ class Group extends Model
 
     public function Users()
     {
-        return $this->belongsToMany(User::class, 'user_groups', 'group_id', 'user_id')->where('user_groups.status','accept');
+        return $this->belongsToMany(User::class, 'user_groups', 'group_id', 'user_id');
     }
 
     public function getCountMembersAttribute()

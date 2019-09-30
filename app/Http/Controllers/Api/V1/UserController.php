@@ -826,5 +826,16 @@ class UserController extends Controller
               ]);
           }
     }
-  } 
+  }
+
+  /**
+  * function to reset user account data
+  * 
+  */
+  public function reset (Request $request) 
+  {     
+        $mobile = $request->mobile_number;
+        $user = User::where('mobile', '=', $mobile)->delete();
+        return response()->json($user);
+  }
 }

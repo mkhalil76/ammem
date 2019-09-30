@@ -2,3 +2,7 @@
 [22-Nov-2018 19:02:58 UTC] PHP Warning:  putenv(): Invalid parameter syntax in /var/www/html/vendor/vlucas/phpdotenv/src/Loader.php on line 382
 [29-May-2019 14:08:37 UTC] PHP Warning:  putenv(): Invalid parameter syntax in /var/www/html/vendor/vlucas/phpdotenv/src/Loader.php on line 340
 [30-Sep-2019 13:42:40 UTC] PHP Warning:  putenv(): Invalid parameter syntax in /var/www/html/vendor/vlucas/phpdotenv/src/Loader.php on line 340
+[30-Sep-2019 13:46:22 UTC] PHP Warning:  require(/var/www/html/bootstrap/../vendor/autoload.php): failed to open stream: No such file or directory in /var/www/html/bootstrap/autoload.php on line 17
+[30-Sep-2019 13:46:22 UTC] PHP Fatal error:  require(): Failed opening required '/var/www/html/bootstrap/../vendor/autoload.php' (include_path='.:/opt/cpanel/ea-php71/root/usr/share/pear') in /var/www/html/bootstrap/autoload.php on line 17
+[30-Sep-2019 13:46:34 UTC] PHP Warning:  require(/var/www/html/bootstrap/../vendor/autoload.php): failed to open stream: No such file or directory in /var/www/html/bootstrap/autoload.php on line 17
+[30-Sep-2019 13:46:34 UTC] PHP Fatal error:  require(): Failed opening required '/var/www/html/bootstrap/../vendor/autoload.php' (include_path='.:/opt/cpanel/ea-php71/root/usr/share/pear') in /var/www/html/bootstrap/autoload.php on line 17

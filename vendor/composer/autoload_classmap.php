@@ -662,6 +662,7 @@ return array(
     'Geckob\\Firebase\\Middleware\\EnsureJson' => $vendorDir . '/geckob/firebase/src/Middleware/EnsureJson.php',
     'Geckob\\Firebase\\Provider\\FirebaseServiceProvider' => $vendorDir . '/geckob/firebase/src/Provider/FirebaseServiceProvider.php',
     'Geckob\\Firebase\\Subscribers\\EnsureJson' => $vendorDir . '/geckob/firebase/src/Subscribers/EnsureJson.php',
+    'Google\\Auth\\AccessToken' => $vendorDir . '/google/auth/src/AccessToken.php',
     'Google\\Auth\\ApplicationDefaultCredentials' => $vendorDir . '/google/auth/src/ApplicationDefaultCredentials.php',
     'Google\\Auth\\CacheTrait' => $vendorDir . '/google/auth/src/CacheTrait.php',
     'Google\\Auth\\Cache\\InvalidArgumentException' => $vendorDir . '/google/auth/src/Cache/InvalidArgumentException.php',

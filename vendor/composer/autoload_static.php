@@ -1161,6 +1161,7 @@ class ComposerStaticInit93367d8317a9e439d1569a33719b9f2a
         'Geckob\\Firebase\\Middleware\\EnsureJson' => __DIR__ . '/..' . '/geckob/firebase/src/Middleware/EnsureJson.php',
         'Geckob\\Firebase\\Provider\\FirebaseServiceProvider' => __DIR__ . '/..' . '/geckob/firebase/src/Provider/FirebaseServiceProvider.php',
         'Geckob\\Firebase\\Subscribers\\EnsureJson' => __DIR__ . '/..' . '/geckob/firebase/src/Subscribers/EnsureJson.php',
+        'Google\\Auth\\AccessToken' => __DIR__ . '/..' . '/google/auth/src/AccessToken.php',
         'Google\\Auth\\ApplicationDefaultCredentials' => __DIR__ . '/..' . '/google/auth/src/ApplicationDefaultCredentials.php',
         'Google\\Auth\\CacheTrait' => __DIR__ . '/..' . '/google/auth/src/CacheTrait.php',
         'Google\\Auth\\Cache\\InvalidArgumentException' => __DIR__ . '/..' . '/google/auth/src/Cache/InvalidArgumentException.php',

@@ -16,7 +16,6 @@
         "laravelcollective/html": "^5.4.0",
         "laravelrus/localized-carbon": "2.2",
         "mpociot/laravel-firebase-sync": "~1.0",
-        "nesbot/carbon": "^1.29",
         "phpoffice/phpexcel": "^1.8",
         "pusher/pusher-php-server": "^3.0",
         "symfony/css-selector": "4.0.3",

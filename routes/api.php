@@ -53,6 +53,7 @@ Route::group(['prefix' => version_api(), 'namespace' => namespace_api(), 'as' =>
         Route::get('group-messages/{group_id}', 'MessageController@getGroupMessages');
         Route::get('group-types', 'ConstantController@getGroupTypes');
         Route::post('media', 'MessageController@postMedia');
+        Route::get('message-replies/{message_id}', 'MessageController@getMessageReplies');
         Route::get('media/{media_id?}', 'MessageController@getMedia');
         Route::post('message/{message_id?}', 'MessageController@postMessage');
         Route::put('message', 'MessageController@putMessage');

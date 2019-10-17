@@ -877,4 +877,38 @@ class MessageController extends Controller
             'status' => true,
         ]);
     }
+
+    /**
+     * function to get list of replies for message
+     * 
+     * @param Int $message_id
+     * 
+     * @return response
+     * 
+     */
+    public function getMessageReplies($message_id)
+    {
+        try {
+            $message = Message::findOrFail($message_id);
+            if ($message->is_reply == 1) {
+                $replies = Reply::where('message_id', '=', $message_id)->get();
+                return response()->json([
+                    'items' => $replies,
+                    'message' => __('messages.fetch_data_msg'),
+                    'status' => true,
+                ]);
+            } else {
+                return response()->json([
+                    'items' => $replies,
+                    'message' => __('messages.fetch_data_msg'),
+                    'status' => true,
+                ]);
+            }
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'message' => __('messages.error_msg'),
+                'status' => false,
+            ]);
+        }
+    }
 }

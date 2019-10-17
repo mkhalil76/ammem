@@ -854,5 +854,27 @@ class MessageController extends Controller
             ->set($message);
 
         return $newMsg->getvalue();   
-    } 
+    }
+
+    /**
+     * function to get the list of messages for the group
+     * 
+     * @param Int $group_id
+     * 
+     * @return response
+     * 
+     */
+    public function getGroupMessages($group_id) 
+    {
+        $message_group = MessageGroup::where('group_id', '=', $group_id)
+            ->pluck('message_id')
+            ->toArray();
+        $messages = Message::whereIn('id',$message_group )->get();
+        
+        return response()->json([
+            'items' => $messages,
+            'message' => __('messages.fetch_data_msg'),
+            'status' => true,
+        ]);
+    }
 }

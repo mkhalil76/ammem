@@ -50,7 +50,7 @@ Route::group(['prefix' => version_api(), 'namespace' => namespace_api(), 'as' =>
         Route::post('accept-group', 'GroupController@postAcceptInvitation');
         Route::get('send-virification-code', 'UserController@sendVirificationCode');
         Route::post('reset-mobile-number', 'UserController@resetMobileNumber');
-
+        Route::get('group-messages/{group_id}', 'MessageController@getGroupMessages');
         Route::get('group-types', 'ConstantController@getGroupTypes');
         Route::post('media', 'MessageController@postMedia');
         Route::get('media/{media_id?}', 'MessageController@getMedia');

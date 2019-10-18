@@ -75,5 +75,6 @@ Route::group(['prefix' => version_api(), 'namespace' => namespace_api(), 'as' =>
         Route::get('get-user-info', 'UserController@getUserInfo');
         Route::get('search-for-contact', 'UserController@searchForContact');
         Route::post('user-accept-or-reject-group', 'UserController@userAcceptOrRejectGroup');
+        Route::get('test-payments', 'PaymentController@index');
     });
 });

@@ -90,12 +90,13 @@ class MessageController extends Controller
 
                         }
                     } else {
-                        $user_group = UserGroup::where('user_id', auth()->user()->id)->whereIn('group_id', (int)$group_id)->first();
+                        $user_group = UserGroup::where('user_id', auth()->user()->id)->where('group_id', (int)$group_id)->first();
                         if (isset($user_group) || $group->user_id == auth()->user()->id) {
                             $groups_data_id[] = (int)$group_id;
                         }
                     }
                 } catch (ModelNotFoundException $e) {
+
                     return response()->json([
                         'status' => false,
                         'message' => __('messages.group_not_found')
@@ -539,7 +540,7 @@ class MessageController extends Controller
                     $data['message'] = $reply;
 
                     $this->sendNotification(auth()->user()->id, $message->user_id, $reply->id, 'reply', null, 'رد جديدة');
-                    $this->pusher->trigger('my-channel' . $group->slug, 'my-event', $data);
+                    //$this->pusher->trigger('my-channel' . $group->slug, 'my-event', $data);
                     return response()->json([
                         'items' => $reply,
                         'status' => true,

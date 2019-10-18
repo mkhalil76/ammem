@@ -7,6 +7,7 @@ use App\Group;
 use App\GroupType;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\User;
 
 class PaymentController extends Controller
 {
@@ -75,5 +76,16 @@ class PaymentController extends Controller
             'status' => true
         ]);
 
+    }
+
+    /**
+     * function to
+     * 
+     */
+    public function index () 
+    {   
+        $user = User::findOrFail(1);
+        $paymentMethods = $user->paymentMethods();
+        return response()->json($paymentMethods);
     }
 }

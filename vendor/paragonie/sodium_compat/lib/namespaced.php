@@ -1,5 +1,7 @@
 <?php
 
+require_once dirname(dirname(__FILE__)) . '/autoload.php';
+
 if (PHP_VERSION_ID < 50300) {
     return;
 }

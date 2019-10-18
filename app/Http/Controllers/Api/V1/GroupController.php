@@ -51,10 +51,10 @@ class GroupController extends Controller
             $group->admin_status = 'accept';
         }
         if ($group->save()) {
-
-            $resend = Mobily::send(auth()->user()->mobile, 'Your group\'s (' . $request->get('name') . ') password: ' . $password);
-
-
+            
+            if ($request->get('status') == "closed") {
+                $resend = Mobily::send(auth()->user()->mobile, 'Your group\'s (' . $request->get('name') . ') password: ' . $password);
+            }
             $group_type = GroupType::find($group->type_id);
 
             $has_limited_number_member = ($group_type->id != 1) ?: false;

@@ -10,6 +10,7 @@
         "brozot/laravel-fcm": "1.2.*",
         "geckob/firebase": "^1.0",
         "kreait/firebase-php": "4.0",
+        "laravel/cashier": "~7.0",
         "laravel/framework": "5.4.*",
         "laravel/passport": "4.0.3",
         "laravel/tinker": "~1.0",

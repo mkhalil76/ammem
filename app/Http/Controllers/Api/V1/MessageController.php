@@ -912,4 +912,34 @@ class MessageController extends Controller
             ]);
         }
     }
+
+    /**
+     * function to set user seem message
+     * 
+     * @param integer $message_id
+     * 
+     * @return response
+     * 
+     */
+    public function setMessageSeen($message_id)
+    {
+        $user_id = Auth::user()->id;
+
+        $msg_seen_exist = UserMessageSeen::where('user_id', '=', $user_id)
+            ->where('message_id', '=', $message_id)
+            ->first();
+
+        if (empty($msg_seen_exist)) {
+            $seen_msg = new UserMessageSeen;
+            $seen_msg->user_id = $user_id;
+            $seen_msg->message_id = $message_id;
+            $seen_msg->save();
+
+            return response()->json([
+                'items' => $seen_msg,
+                'message' => __('messages.fetch_data_msg'),
+                'status' => true,
+            ]);
+        }
+    }
 }

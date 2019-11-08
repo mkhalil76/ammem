@@ -13,9 +13,13 @@ class Message extends Model
     use SoftDeletes;
     use SyncsWithFirebase;
 
-    protected $appends = ['result_survey_count','groups', 'members', 'media', 'surveys', 'user', 'created_date','message_pin_count']; //
+    protected $appends = ['result_survey_count','groups', 'members', 'media', 'surveys', 'user', 'created_date','message_pin_count', 'Replies']; //
 
 
+    public function seen()
+    {
+        return $this->hasMany(UserMessageSeen::class, 'message_id');
+    }
     public function getCreatedDateAttribute()
     {
         $carbon = Carbon::parse($this->created_at);
@@ -95,8 +99,8 @@ class Message extends Model
 
     }
 
-//    public function getRepliesAttribute()
-//    {
-//        return $this->Replies()->get();
-//    }
+   public function getRepliesAttribute()
+    {
+        return $this->Replies()->get();
+    }
 }

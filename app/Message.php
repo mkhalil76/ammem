@@ -15,6 +15,7 @@ class Message extends Model
 
     protected $appends = ['result_survey_count','groups', 'members', 'media', 'surveys', 'user', 'created_date','message_pin_count', 'Replies']; //
 
+    protected $with = ['seen', 'Replies'];
 
     public function seen()
     {

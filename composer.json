@@ -6,7 +6,7 @@
     "type": "project",
     "require": {
         "php": ">=5.6.4",
-        "abdullahobaid/mobilywslaraval": "dev-master",
+        "abdullahobaid/mobilywslaraval": "^1.2",
         "brozot/laravel-fcm": "1.2.*",
         "geckob/firebase": "^1.0",
         "kreait/firebase-php": "4.0",

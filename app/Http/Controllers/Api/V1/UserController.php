@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use abdullahobaid\mobilywslaraval\Mobily as MobilywslaravalMobily;
 use App\DeviceToken;
 use App\Http\Controllers\Controller;
 use App\User;
@@ -843,5 +844,18 @@ class UserController extends Controller
         $mobile = $request->mobile_number;
         $user = User::where('mobile', '=', $mobile)->delete();
         return response()->json($user);
+  }
+
+  /**
+   * function to send sms message
+   * 
+   */
+  public function testSMS()
+  {
+      Mobily::send('00970569918245', 'hello from ammem');
+
+      return response()->json([
+          'test' => true
+      ]);
   }
 }

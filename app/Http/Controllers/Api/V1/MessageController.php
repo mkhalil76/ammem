@@ -417,7 +417,7 @@ class MessageController extends Controller
         $messages_count = $messages_collection->count();
         $messages = $messages_collection->orderBy('pin', 'DESC')->orderBy('created_at', 'DESC')->get();
         return response()->json([
-            'items' => $this->getFromFireBase(),
+            'items' => $messages,
             'message' => __('messages.fetch_data_msg'),
             'status' => true
         ]);
@@ -828,6 +828,9 @@ class MessageController extends Controller
         $snapshot = $reference->getSnapshot();
         $values = $snapshot->getValue();
         $array = [];
+        return response()->json([
+            'items' => $values
+        ]);
         foreach ($values as $value) {
             $array[] = $value;
         }

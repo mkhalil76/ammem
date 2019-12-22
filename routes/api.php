@@ -35,6 +35,7 @@ Route::group(['prefix' => version_api(), 'namespace' => namespace_api(), 'as' =>
     Route::get('jobs', 'ConstantController@getJobs');
     Route::post('send-activation-code', 'UserController@sendActivationCode');
     Route::group(['middleware' => 'auth:api'], function () {
+        Route::post('reset-resend-number', 'UserController@resetResendNumber');
         Route::post('login-to-group', 'GroupController@loginToGroup');
         Route::put('user', 'UserController@putUser');
         Route::get('user/{user_id?}', 'UserController@getUser');
@@ -77,5 +78,6 @@ Route::group(['prefix' => version_api(), 'namespace' => namespace_api(), 'as' =>
         Route::post('user-accept-or-reject-group', 'UserController@userAcceptOrRejectGroup');
         Route::get('test-payments', 'PaymentController@index');
         Route::get('set-message-seen/{message_id}', 'MessageController@setMessageSeen');
+        Route::get('test-sms', 'UserController@testSMS');
     });
 });

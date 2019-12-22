@@ -26,7 +26,7 @@ class Mobily extends Controller
         static::$passAccount = config('mobilysms.password');
     }
 
-    public static function Balance()
+    public function Balance()
     {
         static::run();
         $url = "http://www.mobily.ws/api/balance.php";
@@ -42,16 +42,14 @@ class Mobily extends Controller
         return $result;
     }
 
-    public static function Send($numbers, $msg, $dateSend = 0, $timeSend = 0,$senderName=false)
+    public static function Send($numbers, $msg, $dateSend = 0, $timeSend = 0)
     {
         static::run();
         $numbers = self::format_numbers($numbers);
         $url = "www.mobily.ws/api/msgSend.php";
         $applicationType = "68";
-		if($senderName)
-			$sender = urlencode($senderName);
-		else
-			$sender = urlencode(static::$sender);
+        $sender = urlencode(static::$sender);
+        $domainName = $_SERVER['SERVER_NAME'];
         $stringToPost = "mobile=" . static::$userAccount . "&password=" . static::$passAccount . "&numbers=" . $numbers . "&sender=" . $sender . "&msg=" . $msg . "&timeSend=" . $timeSend . "&dateSend=" . $dateSend . "&applicationType=" . $applicationType . "&domainName=" . $url . "&msgId=" . static::$MsgID . "&deleteKey=" . static::$deleteKey . "&lang=3";
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
@@ -62,10 +60,7 @@ class Mobily extends Controller
         curl_setopt($ch, CURLOPT_POSTFIELDS, $stringToPost);
         $result = curl_exec($ch);
 
-        if ($result == 1) {
-            return true;
-        }
-        elseif ($result == 5) {
+        if ($result == 5) {
             return trans('mobily.wrondpassword');
         } elseif ($result == 4) {
             return trans('mobily.null_user_or_mobile');
@@ -91,6 +86,8 @@ class Mobily extends Controller
             return trans('mobily.service_stoped');
         } elseif ($result == 19) {
             return trans('mobily.app_error');
+        } elseif ($result == 1) {
+            return true;
         }
     }
 
@@ -115,15 +112,6 @@ class Mobily extends Controller
         elseif (starts_with($number, '+'))
             return preg_replace('/^+/', '', $number);
         return $number;
-    }
-
-    public static function count_messages($text)
-    {
-        $length = mb_strlen($text);
-        if ($length <= 70)
-            return 1;
-        else
-            return ceil($length / 67);
     }
 
 }

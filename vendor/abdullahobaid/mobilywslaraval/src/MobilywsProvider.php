@@ -37,11 +37,14 @@ class MobilywsProvider extends ServiceProvider
      */
     public function register()
     {
-        
-         $this->app->singleton('Mobily',function($app){
-            return new Mobily();
-        });
        
+            $this->app['Mobily'] = $this->app->share(function($app)
+            {
+                return new Mobily();
+            });
 
     }
 }
+
+
+ 

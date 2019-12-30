@@ -9,7 +9,7 @@ class Reply extends Model
 {
     //
     use SyncsWithFirebase;
-    protected $appends = ['original_message', 'user','created_date'];
+    //protected $appends = ['original_message', 'user','created_date'];
 
 
     public function getCreatedDateAttribute()

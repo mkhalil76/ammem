@@ -176,12 +176,14 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-
+        LaravelFCM\FCMServiceProvider::class,
         Laravel\Passport\PassportServiceProvider::class,
         Collective\Html\HtmlServiceProvider::class,
         Yajra\DataTables\DataTablesServiceProvider::class,
         Laravelrus\LocalizedCarbon\LocalizedCarbonServiceProvider::class,
-        LaravelFCM\FCMServiceProvider::class,    
+        LaravelFCM\FCMServiceProvider::class,
+        Davibennun\LaravelPushNotification\LaravelPushNotificationServiceProvider::class,
+        
         //Maatwebsite\Excel\ExcelServiceProvider::class,
 //        Netshell\Paypal\PaypalServiceProvider::class,
 
@@ -243,8 +245,13 @@ return [
         'FCM'      => LaravelFCM\Facades\FCM::class,
         'FCMGroup' => LaravelFCM\Facades\FCMGroup::class, // Optional
         'Pusher'    =>  Pusher\Pusher::class,
+        'PushNotification' => Davibennun\LaravelPushNotification\Facades\PushNotification::class,
+        'FCM'      => LaravelFCM\Facades\FCM::class,
+        'FCMGroup' => LaravelFCM\Facades\FCMGroup::class, // Optional
         //'Excel' => Maatwebsite\Excel\Facades\Excel::class,
 //        'Paypal' => Netshell\Paypal\Facades\Paypal::class,
     ],
 
 ];
+
+

@@ -11,6 +11,7 @@ use App\User;
 use App\UserGroup;
 use Illuminate\Http\Request;
 use Mobily;
+use PushNotification;
 
 class UserController extends Controller
 {
@@ -244,4 +245,6 @@ class UserController extends Controller
     {   
         return view(users_site_vw().'index');
     } 
+
+
 }

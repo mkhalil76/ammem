@@ -13,4 +13,5 @@ return array(
     'Mpociot\\Firebase' => array($vendorDir . '/mpociot/laravel-firebase-sync/src'),
     'Mockery' => array($vendorDir . '/mockery/mockery/library'),
     'Laravelrus\\LocalizedCarbon\\' => array($vendorDir . '/laravelrus/localized-carbon/src'),
+    'Davibennun\\LaravelPushNotification' => array($vendorDir . '/davibennun/laravel-push-notification/src'),
 );

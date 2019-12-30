@@ -504,7 +504,6 @@ class MessageController extends Controller
     // create new reply to message
     public function postReply(Request $request)
     {
-
         // `message_id`, `user_id`, `text`
         $rules = [
             'text' => 'required',
@@ -523,32 +522,29 @@ class MessageController extends Controller
         $text = $request->text;
         $user_id = auth()->user()->id;
         $user_message = UserMessage::where('message_id', $message_id)
-            ->where('user_id', '=', $user_id)
             ->first();
+        
 
-        if (isset($user_message)) {
-            $message = Message::where('is_reply', 1)->where('is_archived', 0)->find($message_id);
-            $message_group = MessageGroup::where('message_id', $message_id)->first();
-            if (isset($message_group))
-                $group = Group::find($message_group->group_id);
-            if (isset($message)) {
-                $reply = new Reply();
-                $reply->message_id = $message_id;
-                $reply->user_id = $user_id;
-                $reply->text = $request->get('text');
-                if ($reply->save()) {
-                    $data['message'] = $reply;
+        $message = Message::where('is_reply', 1)->where('is_archived', 0)->find($message_id);
 
-                    $this->sendNotification(auth()->user()->id, $message->user_id, $reply->id, 'reply', null, 'رد جديدة');
-                    //$this->pusher->trigger('my-channel' . $group->slug, 'my-event', $data);
-                    return response()->json([
-                        'items' => $reply,
-                        'status' => true,
-                        'message' => __('messages.successfully_done')
-                    ]);
-                }
+        if (isset($message)) {
+            $reply = new Reply();
+            $reply->message_id = $message_id;
+            $reply->user_id = $user_id;
+            $reply->text = $request->get('text');
+            if ($reply->save()) {
+                $data['message'] = $reply;
+                
+                $this->sendNotification($message->user_id, auth()->user()->id , $reply->id, 'reply', null, 'رد جديدة');
+                //$this->pusher->trigger('my-channel' . $group->slug, 'my-event', $data);
+                return response()->json([
+                    'items' => $reply,
+                    'status' => true,
+                    'message' => __('messages.successfully_done')
+                ]);
             }
         }
+
         return response()->json([
             'message' => __('messages.error_msg'),
             'status' => false

@@ -15,6 +15,37 @@ class Mobily extends Controller
     protected static $passAccount;
     protected static $MsgID;
 
+    
+    public static function arrayOfResults()
+    {
+        $arraySendMsg = array();
+        $arraySendMsg[0] = "لم يتم الاتصال بالخادم";
+        $arraySendMsg[1] = "تمت عملية الإرسال بنجاح";
+        $arraySendMsg[2] = "رصيدك 0 , الرجاء إعادة التعبئة حتى تتمكن من إرسال الرسائل";
+        $arraySendMsg[3] = "رصيدك غير كافي لإتمام عملية الإرسال";
+        $arraySendMsg[4] = "رقم الجوال (إسم المستخدم) غير صحيح";
+        $arraySendMsg[5] = "كلمة المرور الخاصة بالحساب غير صحيحة";
+        $arraySendMsg[6] = "صفحة الانترنت غير فعالة , حاول الارسال من جديد";
+        $arraySendMsg[7] = "نظام المدارس غير فعال";
+        $arraySendMsg[8] = "تكرار رمز المدرسة لنفس المستخدم";
+        $arraySendMsg[9] = "انتهاء الفترة التجريبية";
+        $arraySendMsg[10] = "عدد الارقام لا يساوي عدد الرسائل";
+        $arraySendMsg[11] = "اشتراكك لا يتيح لك ارسال رسائل لهذه المدرسة. يجب عليك تفعيل الاشتراك لهذه المدرسة";
+        $arraySendMsg[12] = "إصدار البوابة غير صحيح";
+        $arraySendMsg[13] = "الرقم المرسل به غير مفعل أو لا يوجد الرمز BS في نهاية الرسالة";
+        $arraySendMsg[14] = "غير مصرح لك بالإرسال بإستخدام هذا المرسل";
+        $arraySendMsg[15] = "الأرقام المرسل لها غير موجوده أو غير صحيحه";
+        $arraySendMsg[16] = "إسم المرسل فارغ، أو غير صحيح";
+        $arraySendMsg[17] = "نص الرسالة غير متوفر أو غير مشفر بشكل صحيح";
+        $arraySendMsg[18] = "تم ايقاف الارسال من المزود";
+        $arraySendMsg[19] = "لم يتم العثور على مفتاح نوع التطبيق";
+        $arraySendMsg[101] = "الارسال باستخدام بوابات الارسال معطل";
+        $arraySendMsg[102] = "الاي بي الخاص بك غير مصرح له بإستخدم بوابات الارسال.";
+        $arraySendMsg[103] = "الدولة التي تقوم بالإرسال منها غير مصرح لها بإستخدم بوابات الارسال.";
+        return $arraySendMsg;
+
+    }
+    
     public static function run()
     {
         static::$sender = config('mobilysms.sender');
@@ -42,7 +73,35 @@ class Mobily extends Controller
         return $result;
     }
 
-    public static function Send($numbers, $msg, $dateSend = 0, $timeSend = 0)
+    public static function Send($numbers, $msg, $dateSend = 0, $timeSend = 0, $viewResult=1)
+    {   
+        static::run();
+        $arraySendMsg = static::arrayOfResults();
+        $url = "http://www.alfa-cell.com/api/msgSend.php";
+        $applicationType = "68";  
+        $sender = urlencode(static::$sender);
+        $domainName = $_SERVER['SERVER_NAME'];
+
+        if(!empty(static::$userAccount) && empty(static::$passAccount)) {
+            $stringToPost = "apiKey=".static::$userAccount."&numbers=".$numbers."&sender=".$sender."&msg=".$msg."&timeSend=".$timeSend."&dateSend=".$dateSend."&applicationType=".$applicationType."&domainName=".$domainName."&msgId=".static::$MsgID."&deleteKey=".static::$deleteKey."&lang=3";
+        } else {
+            $stringToPost = "mobile=".static::$userAccount."&password=".static::$passAccount."&numbers=".$numbers."&sender=".$sender."&msg=".$msg."&timeSend=".$timeSend."&dateSend=".$dateSend."&applicationType=".$applicationType."&domainName=".$domainName."&msgId=".static::$MsgID."&deleteKey=".static::$deleteKey."&lang=3";
+        }
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $stringToPost);
+        $result = curl_exec($ch);
+
+        if($viewResult)
+            $result = static::printStringResult(trim($result) , $arraySendMsg);
+        return $result;
+    }
+
+    public static function Sends($numbers, $msg, $dateSend = 0, $timeSend = 0)
     {
         static::run();
         $numbers = self::format_numbers($numbers);
@@ -89,6 +148,55 @@ class Mobily extends Controller
         } elseif ($result == 1) {
             return true;
         }
+    }
+
+    public static function printStringResult($apiResult, $arrayMsgs, $printType = 'Alpha')
+    {   
+        global $undefinedResult;
+        switch ($printType)
+        {
+            case 'Alpha':
+            {
+                if(array_key_exists($apiResult, $arrayMsgs))
+                    return $arrayMsgs[$apiResult];
+                else
+                    return $arrayMsgs[0];
+            }
+            break;
+
+            case 'Balance':
+            {
+                if(array_key_exists($apiResult, $arrayMsgs))
+                    return $arrayMsgs[$apiResult];
+                else
+                {
+                    list($originalAccount, $currentAccount) = explode("/", $apiResult);
+                    if(!empty($originalAccount) && !empty($currentAccount))
+                    {
+                        return sprintf($arrayMsgs[3], $currentAccount, $originalAccount);
+                    }
+                    else
+                        return $arrayMsgs[0];
+                }
+            }
+            break;
+                
+            case 'Senders':
+            {
+                $apiResult = str_replace('[pending]', '[pending]<br>', $apiResult);
+                $apiResult = str_replace('[active]', '<br>[active]<br>', $apiResult);
+                $apiResult = str_replace('[notActive]', '<br>[notActive]<br>', $apiResult);
+                return $apiResult;
+            }
+            break;
+            
+            case 'Normal':
+                if($apiResult{0} != '#')
+                    return $arrayMsgs[$apiResult];
+                else
+                    return $apiResult;
+            break;
+        }		
     }
 
     public static function format_numbers($numbers)

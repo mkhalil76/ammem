@@ -31,6 +31,11 @@ use Kreait\Firebase;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\ServiceAccount;
 use Kreait\Firebase\Database;
+use PushNotification;
+use LaravelFCM\Message\OptionsBuilder;
+use LaravelFCM\Message\PayloadDataBuilder;
+use LaravelFCM\Message\PayloadNotificationBuilder;
+use FCM;
 
 class UserController extends Controller
 {   
@@ -851,11 +856,39 @@ class UserController extends Controller
    * 
    */
   public function testSMS()
-  {
-      Mobily::send('00970569918245', 'hello from ammem');
-
-      return response()->json([
-          'test' => true
-      ]);
+  { 
+      echo Mobily::sendSMS('+966557287888', 'hello from ammem');
   }
+
+
+      /**
+     * function to test notification 
+     * 
+     * 
+     */
+    public function testNotification()
+    {   
+        $optionBuilder = new OptionsBuilder();
+        $optionBuilder->setTimeToLive(60*20);
+        $notificationBuilder = new PayloadNotificationBuilder(__('Test Notification'));
+        $notificationBuilder->setBody(__('Hello from ammem app'))
+            ->setSound('default');
+
+        $dataBuilder = new PayloadDataBuilder();
+        $dataBuilder->addData([
+            'name' => 'Hello'
+        ]);
+        
+        $option = $optionBuilder->build();
+        $notification = $notificationBuilder->build();
+        $data = $dataBuilder->build();
+
+
+        
+        $downstreamResponse = FCM::sendTo('dWNW43tY5EY:APA91bGgsVIfQ_yf9KLyq-E6aU_IqtDUHYc_34O6wBuR9r71f_lAWO93-1PUCt-fUPmdcDWvU2v_-4elZ-bQMpa00KEosK71iPmWXSdAUI0naxkowTIQMvSufKTf8VAyWes-UAXk7cvY', $option, $notification, $data);
+        
+        $downstreamResponse->numberSuccess();
+        $downstreamResponse->numberFailure();
+        $downstreamResponse->numberModification();
+    }
 }

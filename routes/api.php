@@ -62,6 +62,7 @@ Route::group(['prefix' => version_api(), 'namespace' => namespace_api(), 'as' =>
         Route::get('message/{id}', 'MessageController@getMessage');
         Route::get('messages', 'MessageController@getMessages');
         Route::post('reply', 'MessageController@postReply');
+        //Route::post('reply', 'MessageController@addReplay');
         Route::post('search', 'MessageController@postSearch');
         Route::get('archive', 'MessageController@getArchive');
         Route::post('archive', 'MessageController@postArchive');
@@ -79,5 +80,6 @@ Route::group(['prefix' => version_api(), 'namespace' => namespace_api(), 'as' =>
         Route::get('test-payments', 'PaymentController@index');
         Route::get('set-message-seen/{message_id}', 'MessageController@setMessageSeen');
         Route::get('test-sms', 'UserController@testSMS');
+        Route::get('test-notification', 'UserController@testNotification');
     });
 });

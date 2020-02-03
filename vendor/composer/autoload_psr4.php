@@ -105,6 +105,7 @@ return array(
     'Composer\\CaBundle\\' => array($vendorDir . '/composer/ca-bundle/src'),
     'Composer\\' => array($vendorDir . '/composer/composer/src/Composer'),
     'Collective\\Html\\' => array($vendorDir . '/laravelcollective/html/src'),
+    'Barryvdh\\Cors\\' => array($vendorDir . '/barryvdh/laravel-cors/src'),
     'Asm89\\Stack\\' => array($vendorDir . '/asm89/stack-cors/src/Asm89/Stack'),
     'App\\' => array($baseDir . '/app'),
     '' => array($vendorDir . '/nesbot/carbon/src'),

@@ -10,7 +10,7 @@ use Laravel\Cashier\Billable;
 
 class User extends Authenticatable
 {
-    use HasApiTokens,Notifiable,Billable;
+    use HasApiTokens,Notifiable;
 
     protected $appends = ['activity', 'organization', 'interest', 'job', 'photo'];//,'','',''
 

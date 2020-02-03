@@ -46,10 +46,10 @@ class GroupController extends Controller
         $group->status = $request->get('status');
         $group->user_id = auth()->user()->id;
         $group->password = $password;
-
-        if ($group->type_id == 3) {
-            $group->admin_status = 'accept';
-        }
+        $group->admin_status = 'accept';
+        $group->start_duration = date('Y-m-d');
+        $group->end_duration = date('Y-m-d', strtotime(date("Y-m-d", time()) . " + 365 day"));
+        
         if ($group->save()) {
             
             if ($request->get('status') == "closed") {
@@ -121,7 +121,8 @@ class GroupController extends Controller
             'type_id' => 'sometimes',
             'status' => 'sometimes',
             'members' => 'sometimes', //|exists:users,id
-            'group_id' => 'required'
+            'group_id' => 'required',
+            'is_notification' => 'sometimes'
         ];
         $validator = $this->makeValidation($request, $rules);
 
@@ -149,9 +150,8 @@ class GroupController extends Controller
 
             $group->user_id = auth()->user()->id;
 
-            if ($group->type_id == 3) {
-                $group->admin_status = 'accept';
-            }
+            $group->admin_status = 'accept';
+
             if ($group->save()) {
                 if ($request->has('members')) {
                     $group_type = GroupType::find($group->type_id);
@@ -361,5 +361,33 @@ class GroupController extends Controller
                 'status' => false
             ]);
         }
-    } 
+    }
+
+    /**
+     * function to set group mute for the user
+     * 
+     * 
+     * @param Request $request
+     * 
+     * @return response 
+     * 
+     */
+    public function setMute(Request $request)
+    {
+        $user_id = auth()->user()->id;
+
+        $group_id = $request->group_id;
+
+        $value = $request->is_mute;
+
+        $user_group = UserGroup::where('user_id', '=', $user_id)->where('group_id', '=', $group_id)->first();
+        $user_group->is_mute = $value;
+        $user_group->save();
+
+        return response()->json([
+            'message' => 'Group muted successfly',
+            'items' => $user_group,
+            'status' => true
+        ]);
+    }
 }

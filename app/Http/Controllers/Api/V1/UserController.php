@@ -114,7 +114,7 @@ class UserController extends Controller
     // resend activation code
     public function resendActivationCode(Request $request)
     {   
-        HttpRequest::merge(['mobile' => $this->formatMobileNumber($request->get('mobile'))]);
+        //HttpRequest::merge(['mobile' => $this->formatMobileNumber($request->get('mobile'))]);
         $rules = [
             'mobile' => 'required',
         ];
@@ -135,7 +135,7 @@ class UserController extends Controller
         }
         if (isset($user)) {
             $activation_code = $this->generateActivationCode(6);
-            $resend = Mobily::send($this->formatMobileNumber($request->get('mobile')), 'Your activation code: ' . $activation_code);
+            $resend = Mobily::send($request->get('mobile'), 'Your activation code: ' . $activation_code);
             if ($resend) {
                 $user->activation_code = $activation_code;
                 $user->password = bcrypt($activation_code);
@@ -154,13 +154,90 @@ class UserController extends Controller
         ]);
     }
 
+
+    /**
+     * function to post create new user from web app
+     * 
+     * @param Request $request
+     * 
+     * @return response
+     * 
+     */
+    public function PostNewUser(Request $request)
+    {
+        $rules = [
+            'first_name' => 'required',
+            'family_name' => 'required',
+            'region' => 'required',
+            'mobile' => 'sometimes|unique:users,mobile',
+            'activity_id' => 'sometimes|exists:activities,id',
+            'organization_id' => 'required|exists:organizations,id',
+            'interest_id' => 'required|exists:interests,id',
+            'gender' => 'required|in:male,female',
+            'job_id' => 'required|exists:jobs,id',
+            'email' => 'required|unique:users,email',
+            'profile_pic' => 'required|image|mimes:jpeg,png,jpg,gif,svg'
+        ];
+        $validator = $this->makeValidation($request, $rules);
+        if (!$validator->getData()->status) {
+            return response()->json([
+                'status' => false,
+                'message' => __('messages.error_msg'),
+                'errors' => $validator->getData()->message
+            ]);
+        }
+
+        $mobile_number = $request->get('mobile');
+
+        $activation_code = $this->generateActivationCode(6);
+
+        $user = new User();
+        if (!empty($request->get('country'))) {
+            $user->country = $request->get('country');
+        } else {
+            $user->country = "";
+        }
+        if (!empty($request->profile_pic)) {
+            $imageName = $this->upload($request, 'profile_pic');
+        }  
+        $user->mobile = $request->get('mobile');
+        $user->email = $request->get('email');
+        $user->gender = $request->get('gender');
+        $user->name = $request->get('first_name'). " ".$request->get('family_name');
+        $user->activity_id = $request->get('activity_id');
+        $user->organization_id = $request->get('organization_id');
+        $user->interest_id = $request->get('interest_id');
+        $user->mobile = $request->get('mobile');
+        $user->type = $request->get('user');
+        $user->status = $request->get('status');
+        $user->job_id = $request->get('job_id');
+        $user->profile_pic = $imageName;
+        $user->activation_code = $activation_code;
+        $user->password = bcrypt($activation_code);
+
+        if ($user->save()) {
+            $this->storeInFireBase($user);
+            Mobily::send($mobile_number, 'Your activation code: ' . $activation_code);
+            //$this->send($mobile_number, 'Your activation code: ' . $activation_code);
+            return response()->json([
+                'items' => $user,
+                'message' => __('messages.create_new_user'),
+                'status' => true
+            ]);
+        }
+        return response()->json([
+            'message' => __('messages.error_msg'),
+            'status' => false
+        ]);
+
+    }
     // add new user and send activation code
     public function postUser(Request $request)
     {   
-        HttpRequest::merge(['mobile' => $this->formatMobileNumber($request->get('mobile'))]);
+        //HttpRequest::merge(['mobile' => $this->formatMobileNumber($request->get('mobile'))]);
         $rules = [
             'mobile' => 'required|unique:users,mobile',
-            'email' => 'sometimes|unique:users',
+            //'email' => 'sometimes|unique:users',
             'country' => 'sometimes'
         ];
         $validator = $this->makeValidation($request, $rules);
@@ -171,7 +248,7 @@ class UserController extends Controller
                 'errors' => $validator->getData()->message
             ]);
         }
-        $mobile_number = $this->formatMobileNumber($request->get('mobile'));
+        $mobile_number = $request->get('mobile');
 
         $activation_code = $this->generateActivationCode(6);
         Mobily::send($mobile_number, 'Your activation code: ' . $activation_code);
@@ -257,7 +334,7 @@ class UserController extends Controller
         auth()->user()->email = $request->get('email');
         auth()->user()->profile_pic = $imageName;
         if ($request->has('mobile') && auth()->user()->activation_code == $request->get('old_activation_code')){
-            $mobile_number = $this->formatMobileNumber($request->get('mobile'));
+            $mobile_number = $request->get('mobile');
             $activation_code = $this->generateActivationCode(6);
             $resend = Mobily::send($mobile_number, 'Your activation code: ' . $activation_code);
             if ($resend) {
@@ -285,7 +362,7 @@ class UserController extends Controller
     // activation by mobile
     public function confirmActivationCode(Request $request)
     {   
-        HttpRequest::merge(['mobile' => $this->formatMobileNumber($request->get('mobile'))]);
+        //HttpRequest::merge(['mobile' => $this->formatMobileNumber($request->get('mobile'))]);
         $rules = [
             'mobile' => 'required|exists:users,mobile',
             'activation_code' => 'required'
@@ -298,7 +375,7 @@ class UserController extends Controller
                 'errors' => $validator->getData()->message
             ]);
         }
-        $mobile_number = $this->formatMobileNumber($request->get('mobile'));
+        //$mobile_number = $this->formatMobileNumber($request->get('mobile'));
 
         $user = User::where('mobile', $request->get('mobile'))->where('activation_code', $request->get('activation_code'))->first();
         if (!isset($user)) {
@@ -365,8 +442,7 @@ class UserController extends Controller
         $contacts = array_unique($contacts);
         $users = [];
         foreach ($contacts as $contact) {
-            $mobile_number = $this->formatMobileNumber($contact);
-            $user = User::where('mobile', $mobile_number)->first();
+            $user = User::where('mobile', $contact)->first();
             if (isset($user))
                 $users[] = $user;
         }
@@ -577,7 +653,7 @@ class UserController extends Controller
      */
     public function resetMobileNumber(Request $request)
     {   
-        HttpRequest::merge(['new_mobile_number' => $this->formatMobileNumber($request->new_mobile_number)]);
+        //HttpRequest::merge(['new_mobile_number' => $this->formatMobileNumber($request->new_mobile_number)]);
         $rules = [
             'activation_code' => 'required',
             'new_mobile_number' => 'required'
@@ -608,9 +684,9 @@ class UserController extends Controller
                     'message' => __('messages.user_exist_msg'),
                 ]);
             }
-            $mobile_number = $this->formatMobileNumber($request->new_mobile_number);
+            //$mobile_number = $this->formatMobileNumber($request->new_mobile_number);
             if ($user->activation_code == $request->activation_code) {
-                $user->mobile = $mobile_number;
+                $user->mobile = $request->new_mobile_number;
                 $user->save();
                 // generate the access token 
                 
@@ -651,7 +727,7 @@ class UserController extends Controller
         $activity_name = $request->activity_name;
         $organisation_name = $request->organisation_name;
         $gender = $request->gender;
-        $mobile_number = $this->formatMobileNumber($request->mobile_number);
+        $mobile_number = $request->mobile_number;
 
         $users_list = [];
         if ($mobile_number) {
@@ -814,7 +890,7 @@ class UserController extends Controller
      */
     public function sendActivationCode(Request $request)
     {
-      HttpRequest::merge(['mobile' => $this->formatMobileNumber($request->mobile)]);
+      //HttpRequest::merge(['mobile' => $this->formatMobileNumber($request->mobile)]);
       $exist_mobile = User::where('mobile', '=', $request->mobile)->first();
       if (empty($exist_mobile)) {
           return response()->json([
@@ -824,7 +900,7 @@ class UserController extends Controller
       } else {
           $exist_mobile = User::where('mobile', '=', $request->mobile)->first();
           $activation_code = $this->generateActivationCode(6);
-          $resend = Mobily::send($this->formatMobileNumber($request->mobile), 'Your activation code: ' . $activation_code);
+          $resend = Mobily::send($request->mobile, 'Your activation code: ' . $activation_code);
           if ($resend) {
               $user = User::where('mobile', '=', $request->mobile)->update([
                 'activation_code' => $activation_code,
@@ -857,7 +933,7 @@ class UserController extends Controller
    */
   public function testSMS()
   { 
-      echo Mobily::sendSMS('+966557287888', 'hello from ammem');
+      echo Mobily::send('+966557287888', 'hello from Ammem');
   }
 
 

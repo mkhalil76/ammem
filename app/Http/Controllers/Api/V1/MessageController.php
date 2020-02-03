@@ -475,7 +475,7 @@ class MessageController extends Controller
 
         $message_id = $request->message_id;
         $user_message = UserMessage::where('user_id', auth()->user()->id)->where('message_id', $message_id)->first();
-
+        
         if (isset($user_message)) {
             $message = Message::where('type', 'message_survey')->where('is_archived', 0)->find($message_id);
             if (isset($message)) {

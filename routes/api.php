@@ -24,6 +24,10 @@
 //https://p3plcpnl0822.prod.phx3.secureserver.net
 
 Route::group(['prefix' => version_api(), 'namespace' => namespace_api(), 'as' => 'api.'], function () {
+
+    Route::group(['prefix' => 'auth'], function () {
+        Route::post('user', 'UserController@PostNewUser');
+    });
 	Route::post('reset-user', 'UserController@Reset');
     Route::post('login', 'UserController@access_token');
     Route::post('user', 'UserController@postUser');
@@ -81,5 +85,6 @@ Route::group(['prefix' => version_api(), 'namespace' => namespace_api(), 'as' =>
         Route::get('set-message-seen/{message_id}', 'MessageController@setMessageSeen');
         Route::get('test-sms', 'UserController@testSMS');
         Route::get('test-notification', 'UserController@testNotification');
+        Route::post('mute-group', 'GroupController@setMute');
     });
 });

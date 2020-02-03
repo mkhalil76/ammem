@@ -17,6 +17,8 @@ use LaravelFCM\Message\PayloadNotificationBuilder;
 use Pusher\Pusher;
 use Validator;
 use Vzool\Malath\Malath_SMS;
+use App\MessageGroup;
+use App\UserGroup;
 
 class Controller extends BaseController
 {
@@ -167,6 +169,35 @@ class Controller extends BaseController
                 }
                 return false;
             }
+        } elseif ($action == 'message') {
+            $message_group = MessageGroup::where('message_id', '=', $action_id)->first();
+            $user_group = UserGroup::where('group_id', '=', $message_group->group_id)->where('user_id', '=', $receiver_id)->first();
+
+            if ($user_group->is_mute != 1) {
+                if ($sender_id != $receiver_id) {
+                    $tokens = DeviceToken::where('user_id', $receiver_id)->where('status', 'on')->pluck('device_token')->toArray();
+    
+                    if (count($tokens) > 0) {
+                        $notification = new Notification();
+                        $notification->sender_id = $sender_id;
+                        $notification->action = $action;
+                        $notification->action_id = $action_id;
+                        if ($notification->save()) {
+    
+                            $receiver_notification = new NotificationReceiver();
+                            $receiver_notification->notification_id = $notification->id;
+                            $receiver_notification->receiver_id = $receiver_id;
+                            $receiver_notification->save();
+                            $message = '';
+    
+                            $this->FCM('Ammem', auth()->user()->name . ' ' . $message, $notification, $tokens);
+                            return true;
+                        }
+                        return false;
+                    }
+                }
+            }
+
         } else {
             if ($sender_id != $receiver_id) {
                 $tokens = DeviceToken::where('user_id', $receiver_id)->where('status', 'on')->pluck('device_token')->toArray();

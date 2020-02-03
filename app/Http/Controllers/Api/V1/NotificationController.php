@@ -57,6 +57,9 @@ class NotificationController extends Controller
                 'message' => __('messages.successfully_done')
             ]);
         }  else {
+            $device->device_token = $request->get('device_token');
+            $device->type = $request->get('type');
+            $device->save();
             return response()->json([
                 'status' => true,
                 'message' => __('messages.successfully_done'),

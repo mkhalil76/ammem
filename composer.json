@@ -25,7 +25,6 @@
         "nesbot/carbon": "1.36.2",
         "phpoffice/phpexcel": "^1.8",
         "pusher/pusher-php-server": "^3.0",
-        "spatie/laravel-cors": "^1.6",
         "symfony/css-selector": "4.0.3",
         "vzool/malath_sms": "^0.04.0",
         "yajra/laravel-datatables-oracle": "8.3.3"

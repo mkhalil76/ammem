@@ -184,7 +184,6 @@ return [
         LaravelFCM\FCMServiceProvider::class,
         Davibennun\LaravelPushNotification\LaravelPushNotificationServiceProvider::class,
         
-        Intervention\Image\ImageServiceProvider::class,
         //Maatwebsite\Excel\ExcelServiceProvider::class,
 //        Netshell\Paypal\PaypalServiceProvider::class,
 
@@ -249,7 +248,6 @@ return [
         'PushNotification' => Davibennun\LaravelPushNotification\Facades\PushNotification::class,
         'FCM'      => LaravelFCM\Facades\FCM::class,
         'FCMGroup' => LaravelFCM\Facades\FCMGroup::class, // Optional
-        'Image' => Intervention\Image\Facades\Image::class,
         //'Excel' => Maatwebsite\Excel\Facades\Excel::class,
 //        'Paypal' => Netshell\Paypal\Facades\Paypal::class,
     ],

@@ -116,7 +116,6 @@ class ComposerStaticInit93367d8317a9e439d1569a33719b9f2a
             'Symfony\\Component\\CssSelector\\' => 30,
             'Symfony\\Component\\Console\\' => 26,
             'Symfony\\Bridge\\PsrHttpMessage\\' => 30,
-            'Spatie\\Cors\\' => 12,
             'Sly\\' => 4,
             'Seld\\PharUtils\\' => 15,
             'Seld\\JsonLint\\' => 14,
@@ -393,10 +392,6 @@ class ComposerStaticInit93367d8317a9e439d1569a33719b9f2a
         'Symfony\\Bridge\\PsrHttpMessage\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/psr-http-message-bridge',
-        ),
-        'Spatie\\Cors\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/spatie/laravel-cors/src',
         ),
         'Sly\\' => 
         array (
@@ -4551,11 +4546,6 @@ class ComposerStaticInit93367d8317a9e439d1569a33719b9f2a
         'Sly\\NotificationPusher\\NotificationPusher' => __DIR__ . '/..' . '/sly/notification-pusher/src/Sly/NotificationPusher/NotificationPusher.php',
         'Sly\\NotificationPusher\\PushManager' => __DIR__ . '/..' . '/sly/notification-pusher/src/Sly/NotificationPusher/PushManager.php',
         'Sly\\Sly\\NotificationPusher\\Adapter\\ApnsAPI' => __DIR__ . '/..' . '/sly/notification-pusher/src/Sly/NotificationPusher/Adapter/ApnsAPI.php',
-        'Spatie\\Cors\\Cors' => __DIR__ . '/..' . '/spatie/laravel-cors/src/Cors.php',
-        'Spatie\\Cors\\CorsProfile\\CorsProfile' => __DIR__ . '/..' . '/spatie/laravel-cors/src/CorsProfile/CorsProfile.php',
-        'Spatie\\Cors\\CorsProfile\\DefaultProfile' => __DIR__ . '/..' . '/spatie/laravel-cors/src/CorsProfile/DefaultProfile.php',
-        'Spatie\\Cors\\CorsServiceProvider' => __DIR__ . '/..' . '/spatie/laravel-cors/src/CorsServiceProvider.php',
-        'Spatie\\Cors\\Exceptions\\InvalidCorsProfile' => __DIR__ . '/..' . '/spatie/laravel-cors/src/Exceptions/InvalidCorsProfile.php',
         'Symfony\\Bridge\\PsrHttpMessage\\Factory\\DiactorosFactory' => __DIR__ . '/..' . '/symfony/psr-http-message-bridge/Factory/DiactorosFactory.php',
         'Symfony\\Bridge\\PsrHttpMessage\\Factory\\HttpFoundationFactory' => __DIR__ . '/..' . '/symfony/psr-http-message-bridge/Factory/HttpFoundationFactory.php',
         'Symfony\\Bridge\\PsrHttpMessage\\Factory\\PsrHttpFactory' => __DIR__ . '/..' . '/symfony/psr-http-message-bridge/Factory/PsrHttpFactory.php',

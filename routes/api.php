@@ -25,7 +25,7 @@
 
 Route::group(['prefix' => version_api(), 'namespace' => namespace_api(), 'as' => 'api.'], function () {
 
-    Route::group(['prefix' => 'auth'], function () {
+    Route::middleware('corss')->group(['prefix' => 'auth'], function () {
         Route::post('user', 'UserController@PostNewUser');
     });
 	Route::post('reset-user', 'UserController@Reset');

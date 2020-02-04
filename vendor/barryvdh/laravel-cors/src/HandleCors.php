@@ -1,10 +1,11 @@
-<?php
-
-namespace Fruitcake\Cors;
+<?php namespace Barryvdh\Cors;
 
 use Closure;
 use Asm89\Stack\CorsService;
+use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Foundation\Http\Events\RequestHandled;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response as LaravelResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 class HandleCors
@@ -12,91 +13,61 @@ class HandleCors
     /** @var CorsService $cors */
     protected $cors;
 
-    public function __construct(CorsService $cors)
+    /** @var Dispatcher $events */
+    protected $events;
+
+    public function __construct(CorsService $cors, Dispatcher $events)
     {
         $this->cors = $cors;
+        $this->events = $events;
     }
 
     /**
      * Handle an incoming request. Based on Asm89\Stack\Cors by asm89
+     * @see https://github.com/asm89/stack-cors/blob/master/src/Asm89/Stack/Cors.php
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure  $next
-     * @return Response
+     * @return mixed
      */
     public function handle($request, Closure $next)
     {
-        // Check if we're dealing with CORS and if we should handle it
-        if (! $this->shouldRun($request)) {
+        if (! $this->cors->isCorsRequest($request)) {
             return $next($request);
         }
 
-        // For Preflight, return the Preflight response
         if ($this->cors->isPreflightRequest($request)) {
             return $this->cors->handlePreflightRequest($request);
         }
 
-        // If the request is not allowed, return 403
         if (! $this->cors->isActualRequestAllowed($request)) {
-            return new Response('Not allowed in CORS policy.', 403);
+            return new LaravelResponse('Not allowed in CORS policy.', 403);
         }
 
-        // Handle the request
+        // Add the headers on the Request Handled event as fallback in case of exceptions
+        if (class_exists(RequestHandled::class)) {
+            $this->events->listen(RequestHandled::class, function (RequestHandled $event) {
+                $this->addHeaders($event->request, $event->response);
+            });
+        } else {
+            $this->events->listen('kernel.handled', function (Request $request, Response $response) {
+                $this->addHeaders($request, $response);
+            });
+        }
+
         $response = $next($request);
 
-        // Add the CORS headers to the Response
         return $this->addHeaders($request, $response);
     }
 
     /**
-     * Determine if the request has a URI that should pass through the CORS flow.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return bool
-     */
-    protected function shouldRun(Request $request): bool
-    {
-        // Check if this is an actual CORS request
-        if (! $this->cors->isCorsRequest($request)) {
-            return false;
-        }
-
-        return $this->isMatchingPath($request);
-    }
-
-    /**
-     * The the path from the config, to see if the CORS Service should run
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return bool
-     */
-    protected function isMatchingPath(Request $request): bool
-    {
-        // Get the paths from the config or the middleware
-        $paths = app('config')->get('cors.paths', []);
-
-        foreach ($paths as $path) {
-            if ($path !== '/') {
-                $path = trim($path, '/');
-            }
-
-            if ($request->fullUrlIs($path) || $request->is($path)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Add the headers to the Response, if they don't exist yet.
-     *
      * @param Request $request
      * @param Response $response
      * @return Response
      */
-    protected function addHeaders(Request $request, Response $response): Response
+    protected function addHeaders(Request $request, Response $response)
     {
+        // Prevent double checking
         if (! $response->headers->has('Access-Control-Allow-Origin')) {
             $response = $this->cors->addActualRequestHeaders($response, $request);
         }

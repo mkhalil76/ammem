@@ -200,7 +200,7 @@ class UserController extends Controller
         if (!empty($request->profile_pic)) {
             $imageData = $request->get('profile_pic');
             $fileName = time().'.' . explode('/', explode(':', substr($imageData, 0, strpos($imageData, ';')))[1])[1];
-            \Image::make($request->get('profile_pic'))->save(public_path('/assets/upload').$fileName);
+            \Image::make($request->get('profile_pic'))->save(public_path().'/assets/upload/'.$fileName);
         }  
         $user->mobile = $request->get('mobile');
         $user->email = $request->get('email');
@@ -210,8 +210,8 @@ class UserController extends Controller
         $user->organization_id = $request->get('organization_id');
         $user->interest_id = $request->get('interest_id');
         $user->mobile = $request->get('mobile');
-        $user->type = $request->get('user');
-        $user->status = $request->get('status');
+        $user->type = 'user';
+        $user->status = 'active';
         $user->job_id = $request->get('job_id');
         $user->profile_pic = $fileName;
         $user->activation_code = $activation_code;

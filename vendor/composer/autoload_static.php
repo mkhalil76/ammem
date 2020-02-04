@@ -209,10 +209,6 @@ class ComposerStaticInit93367d8317a9e439d1569a33719b9f2a
             'Composer\\' => 9,
             'Collective\\Html\\' => 16,
         ),
-        'B' => 
-        array (
-            'Barryvdh\\Cors\\' => 14,
-        ),
         'A' => 
         array (
             'Asm89\\Stack\\' => 12,
@@ -549,7 +545,8 @@ class ComposerStaticInit93367d8317a9e439d1569a33719b9f2a
         ),
         'Fruitcake\\Cors\\' => 
         array (
-            0 => __DIR__ . '/..' . '/fruitcake/laravel-cors/src',
+            0 => __DIR__ . '/..' . '/barryvdh/laravel-cors/src',
+            1 => __DIR__ . '/..' . '/fruitcake/laravel-cors/src',
         ),
         'Firebase\\JWT\\' => 
         array (
@@ -622,10 +619,6 @@ class ComposerStaticInit93367d8317a9e439d1569a33719b9f2a
         'Collective\\Html\\' => 
         array (
             0 => __DIR__ . '/..' . '/laravelcollective/html/src',
-        ),
-        'Barryvdh\\Cors\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/barryvdh/laravel-cors/src',
         ),
         'Asm89\\Stack\\' => 
         array (
@@ -761,10 +754,6 @@ class ComposerStaticInit93367d8317a9e439d1569a33719b9f2a
         'Asm89\\Stack\\Cors' => __DIR__ . '/..' . '/asm89/stack-cors/src/Asm89/Stack/Cors.php',
         'Asm89\\Stack\\CorsService' => __DIR__ . '/..' . '/asm89/stack-cors/src/Asm89/Stack/CorsService.php',
         'AssertionError' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/AssertionError.php',
-        'Barryvdh\\Cors\\HandleCors' => __DIR__ . '/..' . '/barryvdh/laravel-cors/src/HandleCors.php',
-        'Barryvdh\\Cors\\HandlePreflight' => __DIR__ . '/..' . '/barryvdh/laravel-cors/src/HandlePreflight.php',
-        'Barryvdh\\Cors\\LumenServiceProvider' => __DIR__ . '/..' . '/barryvdh/laravel-cors/src/LumenServiceProvider.php',
-        'Barryvdh\\Cors\\ServiceProvider' => __DIR__ . '/..' . '/barryvdh/laravel-cors/src/ServiceProvider.php',
         'Carbon\\Carbon' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/Carbon.php',
         'Carbon\\CarbonInterval' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/CarbonInterval.php',
         'Carbon\\CarbonPeriod' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/CarbonPeriod.php',
@@ -1672,8 +1661,8 @@ class ComposerStaticInit93367d8317a9e439d1569a33719b9f2a
         'Firebase\\JWT\\ExpiredException' => __DIR__ . '/..' . '/firebase/php-jwt/src/ExpiredException.php',
         'Firebase\\JWT\\JWT' => __DIR__ . '/..' . '/firebase/php-jwt/src/JWT.php',
         'Firebase\\JWT\\SignatureInvalidException' => __DIR__ . '/..' . '/firebase/php-jwt/src/SignatureInvalidException.php',
-        'Fruitcake\\Cors\\CorsServiceProvider' => __DIR__ . '/..' . '/fruitcake/laravel-cors/src/CorsServiceProvider.php',
-        'Fruitcake\\Cors\\HandleCors' => __DIR__ . '/..' . '/fruitcake/laravel-cors/src/HandleCors.php',
+        'Fruitcake\\Cors\\CorsServiceProvider' => __DIR__ . '/..' . '/barryvdh/laravel-cors/src/CorsServiceProvider.php',
+        'Fruitcake\\Cors\\HandleCors' => __DIR__ . '/..' . '/barryvdh/laravel-cors/src/HandleCors.php',
         'Geckob\\Firebase\\Firebase' => __DIR__ . '/..' . '/geckob/firebase/src/Firebase.php',
         'Geckob\\Firebase\\GoogleConsole' => __DIR__ . '/..' . '/geckob/firebase/src/GoogleConsole.php',
         'Geckob\\Firebase\\HttpHandler\\FirebaseInterface' => __DIR__ . '/..' . '/geckob/firebase/src/HttpHandler/FirebaseInterface.php',

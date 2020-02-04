@@ -184,6 +184,7 @@ return [
         LaravelFCM\FCMServiceProvider::class,
         Davibennun\LaravelPushNotification\LaravelPushNotificationServiceProvider::class,
         
+        FruitCake\Cors\CorsServiceProvider::class,
         Intervention\Image\ImageServiceProvider::class,
         //Maatwebsite\Excel\ExcelServiceProvider::class,
 //        Netshell\Paypal\PaypalServiceProvider::class,

@@ -1,4 +1,4 @@
-# CORS Middleware for Laravel 5
+# CORS Middleware for Laravel
 
 [![Latest Version on Packagist][ico-version]][link-packagist]
 [![Software License][ico-license]](LICENSE.md)
@@ -19,19 +19,13 @@ this [image](http://www.html5rocks.com/static/images/cors_server_flowchart.png).
 
 * Handles CORS pre-flight OPTIONS requests
 * Adds CORS headers to your responses
+* Match routes to only add CORS to certain Requests
 
 ## Installation
 
-Require the `barryvdh/laravel-cors` package in your `composer.json` and update your dependencies:
+Require the `fruitcake/laravel-cors` package in your `composer.json` and update your dependencies:
 ```sh
-$ composer require barryvdh/laravel-cors
-```
-
-For laravel >=5.5 that's all. This package supports Laravel new [Package Discovery](https://laravel.com/docs/5.5/packages#package-discovery).
-
-If you are using Laravel < 5.5, you also need to add Cors\ServiceProvider to your `config/app.php` providers array:
-```php
-Barryvdh\Cors\ServiceProvider::class,
+composer require fruitcake/laravel-cors
 ```
 
 ## Global usage
@@ -41,59 +35,77 @@ To allow CORS for all your routes, add the `HandleCors` middleware in the `$midd
 ```php
 protected $middleware = [
     // ...
-    \Barryvdh\Cors\HandleCors::class,
+    \Fruitcake\Cors\HandleCors::class,
 ];
 ```
 
-## Group middleware
+Now update the config to define the paths you want to run the CORS service on, (see Configuration below):
 
-If you want to allow CORS on a specific middleware group or route, add the `HandleCors` middleware to your group:
-
-```php
-protected $middlewareGroups = [
-    'web' => [
-       // ...
-    ],
-
-    'api' => [
-        // ...
-        \Barryvdh\Cors\HandleCors::class,
-    ],
-];
+```php 
+'paths' => ['api/*'],
 ```
 
 ## Configuration
 
-The defaults are set in `config/cors.php`. Copy this file to your own config directory to modify the values. You can publish the config using this command:
+The defaults are set in `config/cors.php`. Publish the config to copy the file to your own config:
 ```sh
-$ php artisan vendor:publish --provider="Barryvdh\Cors\ServiceProvider"
+php artisan vendor:publish --tag="cors"
 ```
-> **Note:** When using custom headers, like `X-Auth-Token` or `X-Requested-With`, you must set the `allowedHeaders` to include those headers. You can also set it to `array('*')` to allow all custom headers.
+> **Note:** When using custom headers, like `X-Auth-Token` or `X-Requested-With`, you must set the `allowed_headers` to include those headers. You can also set it to `['*']` to allow all custom headers.
 
 > **Note:** If you are explicitly whitelisting headers, you must include `Origin` or requests will fail to be recognized as CORS.
 
     
 ```php
+<?php
+
 return [
-     /*
-     |--------------------------------------------------------------------------
-     | Laravel CORS
-     |--------------------------------------------------------------------------
-     |
-     | allowedOrigins, allowedHeaders and allowedMethods can be set to array('*')
-     | to accept any value.
-     |
+
+    /*
+     * You can enable CORS for 1 or multiple paths.
+     * Example: ['api/*']
      */
-    'supportsCredentials' => false,
-    'allowedOrigins' => ['*'],
-    'allowedHeaders' => ['Content-Type', 'X-Requested-With'],
-    'allowedMethods' => ['*'], // ex: ['GET', 'POST', 'PUT',  'DELETE']
-    'exposedHeaders' => [],
-    'maxAge' => 0,
+    'paths' => [],
+
+    /*
+    * Matches the request method. `[*]` allows all methods.
+    */
+    'allowed_methods' => ['*'],
+
+    /*
+     * Matches the request origin. `[*]` allows all origins.
+     */
+    'allowed_origins' => ['*'],
+
+    /*
+     * Matches the request origin with, similar to `Request::is()`
+     */
+    'allowed_origins_patterns' => [],
+
+    /*
+     * Sets the Access-Control-Allow-Headers response header. `[*]` allows all headers.
+     */
+    'allowed_headers' => ['*'],
+
+    /*
+     * Sets the Access-Control-Expose-Headers response header.
+     */
+    'exposed_headers' => false,
+
+    /*
+     * Sets the Access-Control-Max-Age response header.
+     */
+    'max_age' => false,
+
+    /*
+     * Sets the Access-Control-Allow-Credentials header.
+     */
+    'supports_credentials' => false,
 ];
+
 ```
 
-`allowedOrigins`, `allowedHeaders` and `allowedMethods` can be set to `array('*')` to accept any value.
+`allowed_origins`, `allowed_headers` and `allowed_methods` can be set to `['*']` to accept any value.
 
 > **Note:** Try to be a specific as possible. You can start developing with loose constraints, but it's better to be as strict as possible!
 
@@ -101,44 +113,20 @@ return [
 
 ### Lumen
 
-On Laravel Lumen, load your configuration file manually in `bootstrap/app.php`:
-```php
-$app->configure('cors');
-```
-
-And register the ServiceProvider:
+On Laravel Lumen, just register the ServiceProvider manually:
 
 ```php
-$app->register(Barryvdh\Cors\ServiceProvider::class);
+$app->register(\Fruitcake\Cors\ServiceProvider::class);
 ```
 
 ## Global usage for Lumen
-To allow CORS for all your routes, add the `HandleCors` middleware to the global middleware:
+To allow CORS for all your routes, add the `HandleCors` middleware to the global middleware and set the `paths` property in the config.
 ```php
 $app->middleware([
     // ...
-    \Barryvdh\Cors\HandleCors::class,
+    \Fruitcake\Cors\HandleCors::class,
 ]);
 ```
-
-## Group middleware for Lumen
-If you want to allow CORS on a specific middleware group or route, add the `HandleCors` middleware to your group:
-
-```php
-$app->routeMiddleware([
-    // ...
-    'cors' => \Barryvdh\Cors\HandleCors::class,
-]);
-```
-
-## Common problems and errors (Pre Laravel 5.3)
-In order for the package to work, the request has to be a valid CORS request and needs to include an "Origin" header.
-
-When an error occurs, the middleware isn't run completely. So when this happens, you won't see the actual result, but will get a CORS error instead.
-
-This could be a CSRF token error or just a simple problem.
-
-> **Note:** This should be working in Laravel 5.3+.
 
 ### Disabling CSRF protection for your API
 
@@ -155,17 +143,17 @@ protected $except = [
 
 Released under the MIT License, see [LICENSE](LICENSE).
 
-[ico-version]: https://img.shields.io/packagist/v/barryvdh/laravel-cors.svg?style=flat-square
+[ico-version]: https://img.shields.io/packagist/v/fruitcake/laravel-cors.svg?style=flat-square
 [ico-license]: https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square
-[ico-travis]: https://img.shields.io/travis/barryvdh/laravel-cors/master.svg?style=flat-square
-[ico-scrutinizer]: https://img.shields.io/scrutinizer/coverage/g/barryvdh/laravel-cors.svg?style=flat-square
-[ico-code-quality]: https://img.shields.io/scrutinizer/g/barryvdh/laravel-cors.svg?style=flat-square
-[ico-downloads]: https://img.shields.io/packagist/dt/barryvdh/laravel-cors.svg?style=flat-square
+[ico-travis]: https://img.shields.io/travis/fruitcake/laravel-cors/master.svg?style=flat-square
+[ico-scrutinizer]: https://img.shields.io/scrutinizer/coverage/g/fruitcake/laravel-cors.svg?style=flat-square
+[ico-code-quality]: https://img.shields.io/scrutinizer/g/fruitcake/laravel-cors.svg?style=flat-square
+[ico-downloads]: https://img.shields.io/packagist/dt/fruitcake/laravel-cors.svg?style=flat-square
 
-[link-packagist]: https://packagist.org/packages/barryvdh/laravel-cors
-[link-travis]: https://travis-ci.org/barryvdh/laravel-cors
-[link-scrutinizer]: https://scrutinizer-ci.com/g/barryvdh/laravel-cors/code-structure
-[link-code-quality]: https://scrutinizer-ci.com/g/barryvdh/laravel-cors
-[link-downloads]: https://packagist.org/packages/barryvdh/laravel-cors
-[link-author]: https://github.com/barryvdh
+[link-packagist]: https://packagist.org/packages/fruitcake/laravel-cors
+[link-travis]: https://travis-ci.org/fruitcake/laravel-cors
+[link-scrutinizer]: https://scrutinizer-ci.com/g/fruitcake/laravel-cors/code-structure
+[link-code-quality]: https://scrutinizer-ci.com/g/fruitcake/laravel-cors
+[link-downloads]: https://packagist.org/packages/fruitcake/laravel-cors
+[link-author]: https://github.com/fruitcake
 [link-contributors]: ../../contributors

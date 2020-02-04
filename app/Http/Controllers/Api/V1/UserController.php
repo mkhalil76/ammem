@@ -200,7 +200,7 @@ class UserController extends Controller
         if (!empty($request->profile_pic)) {
             $imageData = $request->get('profile_pic');
             $fileName = time().'.' . explode('/', explode(':', substr($imageData, 0, strpos($imageData, ';')))[1])[1];
-            \Image::make($request->get('logo'))->save(public_path('/assets/upload').$fileName);
+            \Image::make($request->get('profile_pic'))->save(public_path('/assets/upload').$fileName);
         }  
         $user->mobile = $request->get('mobile');
         $user->email = $request->get('email');

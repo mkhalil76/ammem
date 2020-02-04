@@ -997,6 +997,8 @@ return array(
     'Firebase\\JWT\\ExpiredException' => $vendorDir . '/firebase/php-jwt/src/ExpiredException.php',
     'Firebase\\JWT\\JWT' => $vendorDir . '/firebase/php-jwt/src/JWT.php',
     'Firebase\\JWT\\SignatureInvalidException' => $vendorDir . '/firebase/php-jwt/src/SignatureInvalidException.php',
+    'Fruitcake\\Cors\\CorsServiceProvider' => $vendorDir . '/fruitcake/laravel-cors/src/CorsServiceProvider.php',
+    'Fruitcake\\Cors\\HandleCors' => $vendorDir . '/fruitcake/laravel-cors/src/HandleCors.php',
     'Geckob\\Firebase\\Firebase' => $vendorDir . '/geckob/firebase/src/Firebase.php',
     'Geckob\\Firebase\\GoogleConsole' => $vendorDir . '/geckob/firebase/src/GoogleConsole.php',
     'Geckob\\Firebase\\HttpHandler\\FirebaseInterface' => $vendorDir . '/geckob/firebase/src/HttpHandler/FirebaseInterface.php',

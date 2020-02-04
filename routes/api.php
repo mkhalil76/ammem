@@ -23,7 +23,7 @@
 //ssh password: d*{TqNT+y{-;
 //https://p3plcpnl0822.prod.phx3.secureserver.net
 
-Route::group(['prefix' => version_api(), 'middleware' => ['cors'], 'namespace' => namespace_api(), 'as' => 'api.'], function () {
+Route::group(['prefix' => version_api(),'namespace' => namespace_api(), 'as' => 'api.'], function () {
 
     Route::group(['prefix' => 'auth'], function () {
         Route::post('user', 'UserController@PostNewUser');

@@ -176,7 +176,7 @@ class UserController extends Controller
             'gender' => 'required|in:male,female',
             'job_id' => 'required|exists:jobs,id',
             'email' => 'required|unique:users,email',
-            'profile_pic' => 'required|image|mimes:jpeg,png,jpg,gif,svg'
+            'profile_pic' => 'required',
         ];
         $validator = $this->makeValidation($request, $rules);
         if (!$validator->getData()->status) {
@@ -198,7 +198,9 @@ class UserController extends Controller
             $user->country = "";
         }
         if (!empty($request->profile_pic)) {
-            $imageName = $this->upload($request, 'profile_pic');
+            $imageData = $request->get('profile_pic');
+            $fileName = time().'.' . explode('/', explode(':', substr($imageData, 0, strpos($imageData, ';')))[1])[1];
+            \Image::make($request->get('logo'))->save(public_path('/assets/upload').$fileName);
         }  
         $user->mobile = $request->get('mobile');
         $user->email = $request->get('email');
@@ -211,7 +213,7 @@ class UserController extends Controller
         $user->type = $request->get('user');
         $user->status = $request->get('status');
         $user->job_id = $request->get('job_id');
-        $user->profile_pic = $imageName;
+        $user->profile_pic = $fileName;
         $user->activation_code = $activation_code;
         $user->password = bcrypt($activation_code);
 

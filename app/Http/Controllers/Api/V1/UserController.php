@@ -439,11 +439,20 @@ class UserController extends Controller
             ]);
         }
         $contacts = $request->get('contacts');
+        $platform = $request->get('platform');
+        if (empty($platform)) {
+            $platform = "1";
+        }
+
         $contacts = substr($contacts, 1, strlen($contacts) - 2);
         $contacts = explode(',', $contacts);
         $contacts = array_unique($contacts);
+        
         $users = [];
         foreach ($contacts as $contact) {
+            if ($platform == 2) {
+                $contact = substr($contact, 1, strlen($contact) - 2);
+            }
             $user = User::where('mobile', $contact)->first();
             if (isset($user))
                 $users[] = $user;
